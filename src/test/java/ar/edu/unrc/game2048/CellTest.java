@@ -107,7 +107,7 @@ public class CellTest {
 
         //Assert
         assertFalse(canMerge);
-    }
+    } 
 
     public void twoEmptyCellsCannotMerge(){
         //Arrange
