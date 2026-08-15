@@ -128,7 +128,7 @@ public class BoardTest {
         int expectedSize = 4;
         Board board = new Board();
  
-        //ACT
+        //ACTT
         int gettedSize = board.getSize();
         
         //ASSERT
@@ -138,14 +138,29 @@ public class BoardTest {
     @Test
     public void getScore(){
         //ARRANGE
-        int expectedScore = 0;
+        int expectedScore = 0;  
         Board board = new Board();
  
-        //ACT
+        //ACTT
         int gettedScore = board.getScore();
         
         //ASSERT
         assertTrue(gettedScore == expectedScore);
+    }
+
+    @Test
+    public void getScore2(){
+        //ARRANGE
+        Board board = createBoardTest1(); 
+        int expectedScore = 4;
+
+        //ACT
+        board.moveRight();
+        board.moveUp();
+        
+        //ASSERT
+        int actualScore = board.getScore();
+        assertTrue(actualScore == expectedScore);
     }
 
     @Test
