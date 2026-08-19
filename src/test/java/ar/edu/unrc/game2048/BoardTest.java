@@ -413,14 +413,87 @@ public class BoardTest {
     // ==================== MOVE OPERATIONS (WITH DESIGN PROBLEMS) ====================
     //Problems to solve:
     //1°: Sometimes when you moveDown(), some numbers wich are alone desapear
+
     @Test
     public void noMergeMoveUp(){
+        //Arrange
+        //Set this board to look like this (there is only an left merge possible):
+        // 0 0 0 0
+        // 0 0 0 0
+        // 0 0 0 0
+        // 2 4 0 4
+
+        Board board = createEmptyBoard();
+        Cell cell1 = new Cell(2);
+        Cell cell2 = new Cell(4);
+        Cell cell3 = new Cell(4);
         
+        board.setCell(3, 0, cell1);
+        board.setCell(3,1,cell2);
+        board.setCell(3, 3, cell3);
+
+        System.out.println("BOARD INICIAL");
+        System.out.println(board.toString());
+
+        //Act
+        boolean bool = board.moveUp();
+        System.out.println("BOARD RESULTANTE");
+        System.out.println(board.toString());
+
+        //Assert
+        //The expected board looks like this
+        // 2 4 0 4
+        // 0 0 0 0
+        // 0 0 0 0
+        // 0 0 0 0
+
+        Cell leftCell = board.getCell(0, 0);
+        Cell middleCell = board.getCell(0, 1);
+        Cell rightCell = board.getCell(0, 3);
+
+        assertTrue(leftCell.getValue() == 2);
+        assertTrue(middleCell.getValue() == 4);
+        assertTrue(rightCell.getValue() == 4);
+        assertTrue(board.getScore() == 0);
+        assertTrue(bool);
     }
 
     @Test 
     public void mergeMoveUp(){
+        //Arrange
+        //Set this board to look like this (there is only an left merge possible):
+        // 4 0 0 0
+        // 0 0 0 0
+        // 2 0 0 0
+        // 2 0 0 0
+        Board board = createEmptyBoard();
+        Cell cell1 = new Cell(4);
+        Cell cell2 = new Cell(2);
+        Cell cell3 = new Cell(2);
+        board.setCell(0,0,cell1);
+        board.setCell(2,0,cell2);
+        board.setCell(3,0,cell3);
+        
+        System.out.println("BOARD INICIAL");
+        System.out.println(board.toString());
 
+        //Act
+        board.moveUp();
+        System.out.println("BOARD RESULTANTE");
+        System.out.println(board.toString());
+
+        
+        //Assert
+        //The expected board looks like this
+        // 4 0 0 0
+        // 4 0 0 0
+        // 0 0 0 0
+        // 0 0 0 0
+        Cell topCell = board.getCell(0, 0);
+        Cell middleCell = board.getCell(1, 0);
+
+        assertTrue(topCell.getValue() == 4);
+        assertTrue(middleCell.getValue() == 4);
     }
 
 
