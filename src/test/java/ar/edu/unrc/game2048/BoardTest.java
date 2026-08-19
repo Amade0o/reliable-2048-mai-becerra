@@ -497,6 +497,89 @@ public class BoardTest {
     }
 
     @Test
+    public void noMergeMoveLeft(){
+        //Arrange
+        //Set this board to look like this:
+        // 0 0 0 2
+        // 0 0 0 0
+        // 0 0 0 4
+        // 0 0 0 4
+        Board board = createEmptyBoard();
+        Cell cell1 = new Cell(2);
+        Cell cell2 = new Cell(4);
+        Cell cell3 = new Cell(4);
+
+        board.setCell(0,3,cell1);
+        board.setCell(2,3,cell2);
+        board.setCell(3,3,cell3);
+        
+        System.out.println("BOARD INICIAL");
+        System.out.println(board.toString());
+
+        //Act
+        boolean bool = board.moveLeft();
+        System.out.println("BOARD RESULTANTE");
+        System.out.println(board.toString());
+
+        //Assert
+        //The expected board looks like this:
+        // 2 0 0 0
+        // 0 0 0 0
+        // 4 0 0 0
+        // 4 0 0 0
+        Cell topCell = board.getCell(0, 0);
+        Cell middleCell = board.getCell(2, 0);
+        Cell bottomCell = board.getCell(3, 0);
+
+        assertTrue(topCell.getValue() == 2);
+        assertTrue(middleCell.getValue() == 4);
+        assertTrue(bottomCell.getValue() == 4);
+        assertTrue(board.getScore() == 0);
+        assertTrue(bool);
+    }
+
+        @Test 
+    public void mergeMoveLeft(){
+        //Arrange
+        //Set this board to look like this:
+        // 2 0 2 4
+        // 0 0 0 0
+        // 0 0 0 0
+        // 0 0 0 0
+        Board board = createEmptyBoard();
+        Cell cell1 = new Cell(2);
+        Cell cell2 = new Cell(2);
+        Cell cell3 = new Cell(4);
+
+        board.setCell(0,0,cell1);
+        board.setCell(0,2,cell2);
+        board.setCell(0,3,cell3);
+        
+        System.out.println("BOARD INICIAL");
+        System.out.println(board.toString());
+
+        //Act
+        boolean bool = board.moveLeft();
+        System.out.println("BOARD RESULTANTE");
+        System.out.println(board.toString());
+
+        //Assert
+        //The expected board looks like this
+        // 4 4 0 0
+        // 0 0 0 0
+        // 0 0 0 0
+        // 0 0 0 0
+
+        Cell leftCell = board.getCell(0, 0);
+        Cell middleCell = board.getCell(0, 1);
+        
+        assertTrue(leftCell.getValue() == 4);
+        assertTrue(middleCell.getValue() == 4);
+        assertTrue(board.getScore() == 4);
+        assertTrue(bool);
+    }
+
+    @Test
     public void noMergeMoveUp(){
         //Arrange
         //Set this board to look like this:
