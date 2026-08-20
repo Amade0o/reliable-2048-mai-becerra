@@ -1,4 +1,4 @@
-package ar.edu.unrc.game2048.Strategy;
+package ar.edu.unrc.game2048.strategy;
 
 import java.util.List;
 
@@ -12,6 +12,9 @@ for the extraction and the writing, so we will divide everything
 in strategys
 */
 public interface MoveStrategy {
-    List<Cell> extractLine(Cell[][] grid, int size, int index);    
-    void writeLine(Cell[][] grid, int size, List<Cell> line);
+    /*Each move should have an line extractor */
+    List<Cell> extractLine(Board board, int index);
+    
+    /*Each move should have a line writter */
+    void writeLine(Board board, int index, List<Cell> line);
 }
