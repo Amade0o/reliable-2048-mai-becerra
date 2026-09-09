@@ -45,6 +45,7 @@ class MainCLITest {
 
         String salida = systemOut.getText();
         assertTrue(salida.contains("=== 2048 Game ==="));
+        assertTrue(salida.contains("Controls: W(up), S(down), A(left), D(right), Q(quit)"));
     }
 
     @Test
