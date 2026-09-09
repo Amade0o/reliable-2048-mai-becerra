@@ -45,7 +45,7 @@ Report can be found in target/pit-reports/index.html
 
 ## Phase 2: Improve Test Quality
 
-1. Open the JaCoCo report. Look for: 
+1. Open the JaCoCo report. Look for:
 - Red lines (completely untested)
 - Yellow lines (partially tested)
 - Methods with low coverage
@@ -58,7 +58,7 @@ Report can be found in target/pit-reports/index.html
 - Add further test cases
 - Improve test oracles of existing test cases
 
-Aim at at least 90% branch coverage and 90% mutation score. 
+Aim at at least 90% branch coverage and 90% mutation score.
 
 4. Record the improvement, and commit it to the repository with an appropriate tag.
 
@@ -70,12 +70,12 @@ java -cp "lib/randoop-all-4.3.4.jar:target/classes" randoop.main.Main gentests -
 ```
 Run Randoop for all the relevant classes.
 
-2. Measure code coverage and compare with your test suites. 
+2. Measure code coverage and compare with your test suites.
 
 3. Record the results, including, potentially, bugs found. Commit to repository with appropriate tag.
 
 4. Implement repOK() Invariants for Cell and Board.
 
-5. Run Randoop again. 
+5. Run Randoop again.
 
 6. Record the results, including, potentially, bugs found. Commit to repository with appropriate tag.
