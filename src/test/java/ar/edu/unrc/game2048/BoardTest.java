@@ -742,6 +742,147 @@ public class BoardTest {
         assertTrue(bottomCell.getValue() == 4);
         assertTrue(board.getScore() == 4);
     }
+
+    // ==================== EQUALS (BRANCHES) ====================
+
+    @Test
+    public void equalsSameInstance(){
+        //Arrange
+        Board board = createBoardTest1();
+
+        //Act & Assert
+        assertTrue(board.equals(board));
+    }
+
+    @Test
+    public void equalsNull(){
+        //Arrange
+        Board board = createBoardTest1();
+
+        //Act & Assert
+        assertFalse(board.equals(null));
+    }
+
+    @Test
+    public void equalsDifferentClass(){
+        //Arrange
+        Board board = createBoardTest1();
+
+        //Act & Assert
+        assertFalse(board.equals("not a board"));
+    }
+
+    @Test
+    public void equalsDifferentSize(){
+        //Arrange
+        Board board4 = new Board(4);
+        Board board2 = new Board(2);
+
+        //Act & Assert
+        assertFalse(board4.equals(board2));
+    }
+
+    @Test
+    public void equalsDifferentGrid(){
+        //Arrange
+        //Two empty boards, then one gets an extra tile
+        Board board1 = createEmptyBoard();
+        Board board2 = createEmptyBoard();
+        board2.setCell(0, 0, new Cell(2));
+
+        //Act & Assert
+        assertFalse(board1.equals(board2));
+    }
+
+    @Test
+    public void equalsDifferentScore(){
+        //Arrange
+        Board board1 = createBoardTest1();
+        Board board2 = new Board(board1);
+        //Only board1 merges, so its score changes
+        board1.moveRight();
+        board1.moveUp();
+
+        //Act & Assert
+        assertFalse(board1.equals(board2));
+    }
+
+    // ==================== MOVE RETURNS FALSE (BRANCH) ====================
+
+    @Test
+    public void moveOnEmptyBoardReturnsFalse(){
+        //Arrange
+        Board board = createEmptyBoard();
+
+        //Act
+        boolean moved = board.moveUp();
+
+        //Assert
+        assertFalse(moved);
+    }
+
+    @Test
+    public void moveWithNoChangeReturnsFalse(){
+        //Arrange
+        //Full checkerboard: no slide and no merge possible when moving left
+        Board board = createFullLosingBoard();
+
+        //Act
+        boolean moved = board.moveLeft();
+
+        //Assert
+        assertFalse(moved);
+    }
+
+    // ==================== isLosingBoard TRUE (BRANCH) ====================
+
+    @Test
+    public void fullBoardWithNoMergesIsLosingBoard(){
+        //Arrange
+        // 2 4 2 4
+        // 4 2 4 2
+        // 2 4 2 4
+        // 4 2 4 2
+        Board board = createFullLosingBoard();
+
+        //Act
+        boolean isLosingBoard = board.isLosingBoard();
+
+        //Assert
+        assertTrue(isLosingBoard);
+    }
+
+    // ==================== isFull (BRANCHES) ====================
+
+    @Test
+    public void isFullWhenBoardIsFull(){
+        //Arrange
+        Board board = createEmptyBoard();
+        int size = board.getSize();
+        for(int i = 0; i < size; i++){
+            for(int j = 0; j < size; j++){
+                board.setCell(i, j, new Cell(2));
+            }
+        }
+
+        //Act
+        boolean isFull = board.isFull();
+
+        //Assert
+        assertTrue(isFull);
+    }
+
+    @Test
+    public void isNotFullWhenBoardHasEmptyCells(){
+        //Arrange
+        Board board = createBoardTest1();
+
+        //Act
+        boolean isFull = board.isFull();
+
+        //Assert
+        assertFalse(isFull);
+    }
 }
 
 
