@@ -742,6 +742,50 @@ public class BoardTest {
         assertTrue(bottomCell.getValue() == 4);
         assertTrue(board.getScore() == 4);
     }
+
+    @Test
+    public void createInvalidBoard1(){
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Board(-1);
+        });
+    }
+
+    @Test
+    public void createInvalidBoard2(){
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Board(0);
+        });
+    }
+
+    @Test 
+    public void invalidValidatePosition1(){
+        Board board = new Board(5);
+        Cell cell = new Cell(2);
+
+        assertThrows(IndexOutOfBoundsException.class, ()->{
+            board.setCell(7, 2, cell);
+        });
+
+        assertThrows(IndexOutOfBoundsException.class, ()->{
+            board.setCell(2, 7, cell);
+        });
+
+        assertThrows(IndexOutOfBoundsException.class, ()->{
+            board.setCell(7, 7, cell);
+        });
+
+        assertThrows(IndexOutOfBoundsException.class, ()->{
+            board.setCell(2, -7, cell);
+        });
+        
+        assertThrows(IndexOutOfBoundsException.class, ()->{
+            board.setCell(-7, 2, cell);
+        });
+
+        assertThrows(IndexOutOfBoundsException.class, ()->{
+            board.setCell(-7, -7, cell);
+        });
+    }
 }
 
 
