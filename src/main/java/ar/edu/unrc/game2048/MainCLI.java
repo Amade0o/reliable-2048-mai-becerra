@@ -16,6 +16,11 @@ public class MainCLI {
         this.board = new Board();
         this.scanner = new Scanner(System.in);
     }
+
+    public MainCLI(Board board) {
+        this.board = board;
+        this.scanner = new Scanner(System.in);
+    }
     
     /**
      * Main game loop.
@@ -74,7 +79,7 @@ public class MainCLI {
      * Displays the current board state.
      */
     private void displayBoard() {
-        System.out.println(board);
+        System.out.println(board); 
     }
     
     public static void main(String[] args) {

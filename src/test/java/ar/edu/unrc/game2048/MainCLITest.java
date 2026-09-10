@@ -47,6 +47,7 @@ class MainCLITest {
         assertTrue(salida.contains("=== 2048 Game ==="));
         assertTrue(salida.contains("Controls: W(up), S(down), A(left), D(right), Q(quit)"));
         assertTrue(salida.split(System.lineSeparator(), -1)[2].isEmpty());
+        
     }
 
     @Test
