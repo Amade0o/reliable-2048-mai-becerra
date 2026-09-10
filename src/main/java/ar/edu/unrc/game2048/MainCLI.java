@@ -81,4 +81,8 @@ public class MainCLI {
         MainCLI game = new MainCLI();
         game.play();
     }
+
+    public Board getBoard(){
+        return board;
+    }
 }
