@@ -1,4 +1,5 @@
 package ar.edu.unrc.game2048;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -924,6 +925,54 @@ public class BoardTest {
 
         assertThrows(IndexOutOfBoundsException.class, ()->{
             board.setCell(-7, -7, cell);
+        });
+    }
+
+    /*Testea los limites justos del validatePosition para matar los mutantes de boundary.
+      Como pasarse del borde igual tira ArrayIndexOutOfBoundsException (que tambien es
+      IndexOutOfBoundsException), chequeamos el mensaje para asegurarnos de que la excepcion
+      salga del propio validatePosition y no del acceso al array.*/
+    @Test
+    public void validatePositionEnLosBordes(){
+        //ARRANGE
+        Board board = new Board(5);
+        Cell cell = new Cell(2);
+
+        //ACT + ASSERT
+        //Justo en size (5) tiene que tirar desde validatePosition, tanto por fila como por columna
+        IndexOutOfBoundsException filaAlta = assertThrows(IndexOutOfBoundsException.class, ()->{
+            board.setCell(5, 2, cell);
+        });
+        assertTrue(filaAlta.getMessage().contains("is out of bounds for board size"));
+
+        IndexOutOfBoundsException columnaAlta = assertThrows(IndexOutOfBoundsException.class, ()->{
+            board.getCell(2, 5);
+        });
+        assertTrue(columnaAlta.getMessage().contains("is out of bounds for board size"));
+
+        //Justo en -1 tambien tiene que tirar desde validatePosition
+        IndexOutOfBoundsException filaBaja = assertThrows(IndexOutOfBoundsException.class, ()->{
+            board.getCell(-1, 2);
+        });
+        assertTrue(filaBaja.getMessage().contains("is out of bounds for board size"));
+
+        IndexOutOfBoundsException columnaBaja = assertThrows(IndexOutOfBoundsException.class, ()->{
+            board.setCell(2, -1, cell);
+        });
+        assertTrue(columnaBaja.getMessage().contains("is out of bounds for board size"));
+
+        //Los bordes validos (0 y size-1) NO tienen que tirar nada
+        assertDoesNotThrow(()->{
+            board.setCell(0, 0, cell);
+        });
+        assertDoesNotThrow(()->{
+            board.setCell(4, 4, cell);
+        });
+        assertDoesNotThrow(()->{
+            board.getCell(0, 4);
+        });
+        assertDoesNotThrow(()->{
+            board.getCell(4, 0);
         });
     }
 }
