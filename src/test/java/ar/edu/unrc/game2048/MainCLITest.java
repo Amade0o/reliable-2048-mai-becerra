@@ -27,6 +27,36 @@ class MainCLITest {
     @SystemStub
     private SystemOut systemOut;
 
+    private Board createEmptyBoard(){
+        Board board = new Board();
+        int size = board.getSize();
+
+        for(int i = 0; i < size; i++){
+            for(int j = 0; j < size; j++){
+                Cell cell = new Cell(0);
+                board.setCell(i, j, cell);
+            }
+        }
+
+        return board;
+    }
+
+    /*Private void for creating a 4x4 board with two "2" looking like this:*/
+    // _ _ _ _
+    // _ 2 _ _
+    // _ _ 2 _
+    // _ _ _ _
+    private Board createBoardTest1(){
+        Board board = createEmptyBoard();
+        Cell cell1 = new Cell(2);
+        Cell cell2 = new Cell(2);
+
+        board.setCell(1, 1, cell1);
+        board.setCell(2, 2, cell2);
+
+        return board;
+    }
+
     @Test
     void salirInmediatamenteConQ() {
         // Cada elemento = una línea que devolverá scanner.nextLine()
@@ -41,13 +71,21 @@ class MainCLITest {
     void secuenciaDeMovimientosYLuegoSalir() {
         systemIn.setInputStream(new LinesAltStream("A", "S", "D", "W", "Q"));
     
-        new MainCLI().play();
+        // _ _ _ _
+        // _ 2 _ _
+        // _ _ 2 _
+        // _ _ _ _
+        Board board = createBoardTest1();
+        String tableroEsperado = board.toString();
+
+        new MainCLI(board).play();
 
         String salida = systemOut.getText();
         assertTrue(salida.contains("=== 2048 Game ==="));
         assertTrue(salida.contains("Controls: W(up), S(down), A(left), D(right), Q(quit)"));
         assertTrue(salida.split(System.lineSeparator(), -1)[2].isEmpty());
         
+        assertTrue(salida.contains(tableroEsperado));
     }
 
     @Test
