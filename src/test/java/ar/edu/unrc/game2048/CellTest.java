@@ -109,9 +109,40 @@ public class CellTest {
         assertFalse(canMerge);
     } 
 
+    @Test
     public void twoEmptyCellsCannotMerge(){
         //Arrange
         int value1 = 0;
+        int value2 = 0;
+        Cell cell1 = new Cell(value1);
+        Cell cell2 = new Cell(value2);
+
+        //Act
+        boolean canMerge = cell1.canMergeWith(cell2);
+
+        //Assert
+        assertFalse(canMerge);
+    }
+
+    @Test
+    public void oneEmptyCellCannotMerge(){
+        //Arrange
+        int value1 = 0;
+        int value2 = 2;
+        Cell cell1 = new Cell(value1);
+        Cell cell2 = new Cell(value2);
+
+        //Act
+        boolean canMerge = cell1.canMergeWith(cell2);
+
+        //Assert
+        assertFalse(canMerge);
+    }
+
+    @Test
+    public void secondEmptyCellsCannotMerge(){
+        //Arrange
+        int value1 = 2;
         int value2 = 0;
         Cell cell1 = new Cell(value1);
         Cell cell2 = new Cell(value2);

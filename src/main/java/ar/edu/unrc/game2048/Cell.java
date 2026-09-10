@@ -63,7 +63,7 @@ public final class Cell {
      * @return true if the cells can merge, false otherwise
      */
     public boolean canMergeWith(Cell other) {
-        if (this.isEmpty() && other.isEmpty()) {
+        if (this.isEmpty() || other.isEmpty()) {
             return false;
         }
         return this.value == other.value;
