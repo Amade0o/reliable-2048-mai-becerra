@@ -10,12 +10,13 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <!-- El código de producción compila a bytecode Java 8 para que EvoSuite 1.0.6
+             (que solo corre sobre Java 8) pueda cargarlo. Los tests usan APIs más nuevas. -->
+        <maven.compiler.release>8</maven.compiler.release>
+        <maven.compiler.testRelease>17</maven.compiler.testRelease>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.jupiter.version>5.9.2</junit.jupiter.version>
         <junit.vintage.version>5.9.2</junit.vintage.version>
-        <evosuiteVersion>1.0.6</evosuiteVersion>
     </properties>
 
     <dependencies>
@@ -64,13 +65,9 @@
             <systemPath>${project.basedir}/lib/randoop-all-4.3.4.jar</systemPath>
         </dependency>
 
-        <!-- EvoSuite runtime -->
-        <dependency>
-            <groupId>org.evosuite</groupId>
-            <artifactId>evosuite-standalone-runtime</artifactId>
-            <version>${evosuiteVersion}</version>
-            <scope>test</scope>
-        </dependency>
+        <!-- EvoSuite: runEvosuite.sh genera los tests con -Dno_runtime_dependency=true, así son
+             JUnit 4 planos. El evosuite-standalone-runtime 1.0.6 no sirve con Java 17+: su ASM no lee
+             bytecode posterior a Java 8 y su sandbox usa el SecurityManager. -->
 
         <!-- JUnit Vintage for running JUnit 4 tests -->
         <dependency>
@@ -157,19 +154,8 @@
                     </outputFormats>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.evosuite.plugins</groupId>
-                <artifactId>evosuite-maven-plugin</artifactId>
-                <version>${evosuiteVersion}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare</goal>
-                        </goals>
-                        <phase>process-test-classes</phase>
-                    </execution>
-                </executions>
-            </plugin>
+            <!-- evosuite-maven-plugin se quitó: depende de tools.jar, que no existe desde
+                 Java 9, y rompe el build. Los tests se generan con runEvosuite.sh (Java 8). -->
         </plugins>
     </build>
 
