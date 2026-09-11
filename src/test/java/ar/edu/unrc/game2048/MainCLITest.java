@@ -57,6 +57,20 @@ class MainCLITest {
         return board;
     }
 
+    /*Private void for creating a winning board looking like this:*/
+    // _ _ _ _
+    // _ 2048 _ _
+    // _ _ _ _
+    // _ _ _ _
+    private Board createBoardTest2(){
+        Board board = createEmptyBoard();
+        Cell cell1 = new Cell(2048);
+
+        board.setCell(1, 1, cell1);
+        
+        return board;
+    }
+
     @Test
     void salirInmediatamenteConQ() {
         // Cada elemento = una línea que devolverá scanner.nextLine()
@@ -95,5 +109,29 @@ class MainCLITest {
         new MainCLI().play();
 
         assertTrue(systemOut.getText().contains("Invalid input!"));
+    }
+
+    @Test
+    void secuenciaDeMovimientosConWinningBoard() {
+        systemIn.setInputStream(new LinesAltStream("Q"));
+    
+        //    _ _ _ _
+        // _ 2048 _ _
+        // _ _ _ _
+        // _ _ _ _
+        Board board = createBoardTest2();
+        String tableroEsperado = board.toString();
+
+        new MainCLI(board).play();
+
+        String salida = systemOut.getText();
+        assertTrue(salida.contains("=== 2048 Game ==="));
+        assertTrue(salida.contains("Controls: W(up), S(down), A(left), D(right), Q(quit)"));
+        assertTrue(salida.split(System.lineSeparator(), -1)[2].isEmpty());
+        
+        assertTrue(salida.contains(tableroEsperado));
+
+        assertTrue(salida.contains("Congratulations! You reached 2048!"));
+        assertTrue(salida.contains("You can continue playing or quit."));
     }
 }
