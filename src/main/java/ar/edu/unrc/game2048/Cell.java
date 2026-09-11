@@ -35,6 +35,7 @@ public final class Cell {
             throw new IllegalArgumentException("Cell value cannot be negative: " + value);
         }
         this.value = value;
+        assert repOK();
     }
     
     /**
@@ -53,6 +54,26 @@ public final class Cell {
      */
     public int getValue() {
         return value;
+    }
+
+    /**
+     * Checks whether this cell satisfies its representation invariant.
+     *
+     * @return true if the value is zero or a positive power of two
+     */
+    public boolean repOK() {
+        if (value < 0) {
+            return false;
+        }
+        if (value == 0) {
+            return true;
+        }
+
+        int remaining = value;
+        while (remaining % 2 == 0) {
+            remaining /= 2;
+        }
+        return remaining == 1;
     }
     
     /**

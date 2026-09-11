@@ -151,6 +151,13 @@ public class BoardTest {
     }
 
     @Test
+    public void repOKForNewBoard(){
+        Board board = new Board();
+
+        assertTrue(board.repOK());
+    }
+
+    @Test
     public void getScore2(){
         //ARRANGE
         Board board = createBoardTest1(); 

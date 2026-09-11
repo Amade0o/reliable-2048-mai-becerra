@@ -80,6 +80,13 @@ public class CellTest {
     }
 
     @Test
+    public void repOKForValidCells(){
+        assertTrue(new Cell(0).repOK());
+        assertTrue(new Cell(2).repOK());
+        assertTrue(new Cell(2048).repOK());
+    }
+
+    @Test
     public void twoCellsCanMerge(){
         //Arrange
         int value1 = 2;

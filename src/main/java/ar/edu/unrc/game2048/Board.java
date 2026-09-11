@@ -66,6 +66,7 @@ public class Board {
         initializeEmpty();
         addRandomTile();
         addRandomTile();
+        assert repOK();
     }
 
     /**
@@ -82,6 +83,7 @@ public class Board {
                 this.grid[r][c] = other.grid[r][c];
             }
         }
+        assert repOK();
     }
 
     /**
@@ -93,6 +95,7 @@ public class Board {
                 grid[r][c] = Cell.EMPTY;
             }
         }
+        assert repOK();
     }
 
     /**
@@ -111,6 +114,30 @@ public class Board {
      */
     public int getScore() {
         return score;
+    }
+
+    /**
+     * Checks whether this board satisfies its representation invariants.
+     *
+     * @return true if the board has a positive square shape, a non-negative
+     *         score, and only valid non-null cells
+     */
+    public boolean repOK() {
+        if (size <= 0 || score < 0 || grid == null || grid.length != size) {
+            return false;
+        }
+
+        for (Cell[] row : grid) {
+            if (row == null || row.length != size) {
+                return false;
+            }
+            for (Cell cell : row) {
+                if (cell == null || !cell.repOK()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -141,6 +168,7 @@ public class Board {
             throw new IllegalArgumentException("Cell cannot be null");
         }
         grid[row][col] = cell;
+        assert repOK();
     }
 
     /**
@@ -287,6 +315,7 @@ public class Board {
         if (moved) {
             addRandomTile(); // Add new random tile after successful move
         }
+        assert repOK();
         return moved;
     }
 
@@ -297,7 +326,9 @@ public class Board {
      */
     public boolean moveUp() {
         MoveStrategy upMoveStrategy = new UpMoveStrategy();
-        return move(upMoveStrategy);
+        boolean moved = move(upMoveStrategy);
+        assert repOK();
+        return moved;
     }
 
     /**
@@ -307,7 +338,9 @@ public class Board {
      */
     public boolean moveDown() {
         MoveStrategy downMoveStrategy = new DownMoveStrategy();
-        return move(downMoveStrategy);
+        boolean moved = move(downMoveStrategy);
+        assert repOK();
+        return moved;
     }
 
     /**
@@ -317,7 +350,9 @@ public class Board {
      */
     public boolean moveLeft() {
         MoveStrategy leftMoveStrategy = new LeftMoveStrategy();
-        return move(leftMoveStrategy);
+        boolean moved = move(leftMoveStrategy);
+        assert repOK();
+        return moved;
     }
 
     /**
@@ -327,7 +362,9 @@ public class Board {
      */
     public boolean moveRight() {
         MoveStrategy rightMoveStrategy = new RightMoveStrategy();
-        return move(rightMoveStrategy);
+        boolean moved = move(rightMoveStrategy);
+        assert repOK();
+        return moved;
     }
 
     // ==================== RANDOM TILE ADDITION (PRIVATE) ====================
@@ -342,7 +379,7 @@ public class Board {
     private boolean addRandomTile() {
         Set<Position> empty = getEmptyPositions();
         if (empty.isEmpty()) {
-            return false;
+            return false; 
         }
 
         // Choose random position
@@ -353,6 +390,7 @@ public class Board {
         int value = Math.random() < 0.9 ? 2 : 4;
         grid[pos.row][pos.col] = new Cell(value);
 
+        assert repOK();
         return true;
     }
 
