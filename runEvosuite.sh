@@ -7,13 +7,13 @@
 
 EVOSUITE_JAR="evosuite-1.0.6.jar"
 EVOSUITE_URL="https://github.com/EvoSuite/evosuite/releases/download/v1.0.6/evosuite-1.0.6.jar"
-TARGET_CLASS="ar.edu.unrc.game2048.Cell"
+TARGET_CLASS="ar.edu.unrc.game2048.Board"
 SEARCH_BUDGET=60
 
 if [ -z "$JAVA8_HOME" ] || [ ! -f "$JAVA8_HOME/lib/tools.jar" ]; then
     echo "Definí JAVA8_HOME apuntando a un JDK 8 (tiene que tener lib/tools.jar)." >&2
     exit 1
-fi
+fi  
 
 # Download EvoSuite if not exists
 if [ ! -f "$EVOSUITE_JAR" ]; then
