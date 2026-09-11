@@ -977,8 +977,6 @@ public class BoardTest {
         });
     }
 
-    // ==================== toString ====================
-
     @Test
     public void toStringDeTableroVacioMuestraBordesYCeldasVacias(){
         Board board = createEmptyBoard();
