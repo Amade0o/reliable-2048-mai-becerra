@@ -1,5 +1,6 @@
 package ar.edu.unrc.game2048;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -974,6 +975,47 @@ public class BoardTest {
         assertDoesNotThrow(()->{
             board.getCell(4, 0);
         });
+    }
+
+    // ==================== toString ====================
+
+    @Test
+    public void toStringDeTableroVacioMuestraBordesYCeldasVacias(){
+        Board board = createEmptyBoard();
+        int size = board.getSize();
+
+        String borde = "+" + "-----+".repeat(size) + "\n";
+        String filaVacia = "|" + "     |".repeat(size) + "\n";
+
+        StringBuilder esperado = new StringBuilder("Score: 0\n");
+        for(int r = 0; r < size; r++){
+            esperado.append(borde).append(filaVacia);
+        }
+        esperado.append(borde);
+
+        assertEquals(esperado.toString(), board.toString());
+    }
+
+    @Test
+    public void toStringMuestraLosValoresDeLasCeldasFormateados(){
+        //Tablero de createBoardTest1: celdas (1,1) y (2,2) con valor 2, el resto vacio
+        Board board = createBoardTest1();
+        int size = board.getSize();
+
+        String borde = "+" + "-----+".repeat(size) + "\n";
+
+        StringBuilder esperado = new StringBuilder("Score: 0\n");
+        for(int r = 0; r < size; r++){
+            esperado.append(borde).append("|");
+            for(int c = 0; c < size; c++){
+                boolean tieneValor = (r == 1 && c == 1) || (r == 2 && c == 2);
+                esperado.append(tieneValor ? String.format("%5d", 2) : "     ").append("|");
+            }
+            esperado.append("\n");
+        }
+        esperado.append(borde);
+
+        assertEquals(esperado.toString(), board.toString());
     }
 }
 
