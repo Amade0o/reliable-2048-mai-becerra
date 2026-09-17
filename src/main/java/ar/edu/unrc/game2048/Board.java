@@ -153,7 +153,7 @@ public class Board {
      * @return true if the board has a positive square shape, a non-negative
      *         score, and only valid non-null cells
      */
-    @CheckRep 
+    @CheckRep
     public boolean repOK() {
         if (size <= 0 || score < 0 || grid == null || grid.length != size) {
             return false;
