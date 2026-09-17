@@ -47,7 +47,7 @@ class CLIRunner(Runner):
     PASS, FAIL, or UNRESOLVED.
     """
 
-    COMMAND = ['java', '-cp', './target/classes', 'ar.edu.unrc.game2048.MainCLI']
+    COMMAND = ['java', '-ea', '-cp', './target/classes', 'ar.edu.unrc.game2048.MainCLI']
     TIMEOUT = 10  # seconds
 
     def run(self, inp: str) -> Tuple[subprocess.CompletedProcess, str]:
