@@ -2,6 +2,8 @@ package ar.edu.unrc.game2048;
 
 import java.util.Objects;
 
+import randoop.CheckRep;
+
 /**
  * Represents a single cell in the 2048 game board.
  * A cell is either empty (value = 0) or contains a power of two (2, 4, 8, ...).
@@ -61,6 +63,7 @@ public final class Cell {
      *
      * @return true if the value is zero or a positive power of two
      */
+    @CheckRep 
     public boolean repOK() {
         if (value < 0) {
             return false;

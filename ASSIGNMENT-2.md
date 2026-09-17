@@ -65,7 +65,7 @@ Aim at at least 90% branch coverage and 90% mutation score.
 
 1. Run Randoop to generate test cases automatically:
 ```bash
-java -cp "lib/randoop-all-4.3.4.jar:target/classes" randoop.main.Main gentests --testclass=ar.edu.unrc.game2048.Cell --time-limit=10 --junit-output-dir=src/test/java --junit-package-name=randoopTests
+./runRandoop.sh
 ```
 Run Randoop for all the relevant classes.
 

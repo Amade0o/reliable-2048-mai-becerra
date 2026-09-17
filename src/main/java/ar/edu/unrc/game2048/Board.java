@@ -2,7 +2,10 @@ package ar.edu.unrc.game2048;
 
 import java.util.*;
 
+import ar.edu.unrc.game2048.RandomNumGeneration.IRandom;
+import ar.edu.unrc.game2048.RandomNumGeneration.MathRandom;
 import ar.edu.unrc.game2048.strategy.*;
+import randoop.CheckRep;
 
 /**
  * Represents the 2048 game board.
@@ -38,6 +41,9 @@ public class Board {
      */
     private final Cell[][] grid;
 
+    /** Source of random values used when adding tiles. */
+    private final IRandom randomGeneration;
+
     /**
      * Game accumulated score.
      */
@@ -47,7 +53,7 @@ public class Board {
      * Creates a new board of the default size (4x4) with two random tiles.
      */
     public Board() {
-        this(DEFAULT_SIZE);
+        this(DEFAULT_SIZE, new MathRandom());
     }
 
     /**
@@ -57,11 +63,35 @@ public class Board {
      * @throws IllegalArgumentException if size <= 0
      */
     public Board(int size) {
+        this(size, new MathRandom());
+    }
+
+    /**
+     * Creates a board of the default size using the supplied random generator.
+     *
+     * @param randomGeneration generator used for tile positions and values
+     */
+    public Board(IRandom randomGeneration) {
+        this(DEFAULT_SIZE, randomGeneration);
+    }
+
+    /**
+     * Creates a board using the supplied random value generator.
+     *
+     * @param size the board size (must be > 0)
+     * @param randomGeneration generator used for tile positions and values
+     * @throws IllegalArgumentException if size <= 0 or the generator is null
+     */
+    public Board(int size, IRandom randomGeneration) {
         if (size <= 0) {
             throw new IllegalArgumentException("Board size must be positive: " + size);
         }
+        if (randomGeneration == null) {
+            throw new IllegalArgumentException("Random generator must not be null");
+        }
         this.size = size;
         this.grid = new Cell[size][size];
+        this.randomGeneration = randomGeneration;
         this.score = 0;
         initializeEmpty();
         addRandomTile();
@@ -77,6 +107,7 @@ public class Board {
     public Board(Board other) {
         this.size = other.size;
         this.grid = new Cell[size][size];
+        this.randomGeneration = other.randomGeneration;
         this.score = other.score;
         for (int r = 0; r < size; r++) {
             for (int c = 0; c < size; c++) {
@@ -122,6 +153,7 @@ public class Board {
      * @return true if the board has a positive square shape, a non-negative
      *         score, and only valid non-null cells
      */
+    @CheckRep
     public boolean repOK() {
         if (size <= 0 || score < 0 || grid == null || grid.length != size) {
             return false;
@@ -383,11 +415,11 @@ public class Board {
         }
 
         // Choose random position
-        int randomIndex = (int) (Math.random() * empty.size());
+        int randomIndex = Math.floorMod(randomGeneration.nextRandom(), empty.size());
         Position pos = empty.stream().skip(randomIndex).findFirst().get();
 
         // 90% chance of 2, 10% chance of 4 (standard 2048 rules)
-        int value = Math.random() < 0.9 ? 2 : 4;
+        int value = Math.floorMod(randomGeneration.nextRandom(), 100) < 90 ? 2 : 4;
         grid[pos.row][pos.col] = new Cell(value);
 
         assert repOK();
