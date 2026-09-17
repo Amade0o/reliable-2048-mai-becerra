@@ -104,7 +104,7 @@ class RandomFuzzer(Fuzzer):
         Maximum number of move keys in the sequence.
     """
 
-    def __init__(self, min_length: int = random.randint(1, 10), max_length: int = random.randint(20, 50)):
+    def __init__(self, min_length: int = 10, max_length: int = 50):
         self.min_length = min_length
         self.max_length = max_length
 
@@ -126,7 +126,9 @@ class RandomFuzzer(Fuzzer):
         
 
         length = random.randint(self.min_length, self.max_length)
-        moves = [random.choice(KEYS) for _ in range(length)]
+        moves = []
+        for _ in range(length):
+            moves.append(random.choice(KEYS))
         moves.append('q')
 
         return '\n'.join(moves) + '\n'
