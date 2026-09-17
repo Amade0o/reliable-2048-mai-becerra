@@ -104,7 +104,7 @@ class RandomFuzzer(Fuzzer):
         Maximum number of move keys in the sequence.
     """
 
-    def __init__(self, min_length: int = 10, max_length: int = 50):
+    def __init__(self, min_length: int = random.randint(1, 10), max_length: int = random.randint(20, 50)):
         self.min_length = min_length
         self.max_length = max_length
 
@@ -122,7 +122,14 @@ class RandomFuzzer(Fuzzer):
         Example output for a sequence of 3 moves:
             'w\\na\\nd\\nq\\n'
         """
-        raise NotImplementedError
+
+        
+
+        length = random.randint(self.min_length, self.max_length)
+        moves = [random.choice(KEYS) for _ in range(length)]
+        moves.append('q')
+
+        return '\n'.join(moves) + '\n'
 
 # ---------------------------------------------------------------------------
 # Main: run the fuzzer and report results
@@ -130,7 +137,7 @@ class RandomFuzzer(Fuzzer):
 
 def main():
     runner = CLIRunner()
-    fuzzer = RandomFuzzer(min_length=10, max_length=50)
+    fuzzer = RandomFuzzer()
 
     trials = 20
     outcomes = {PASS: 0, FAIL: 0, UNRESOLVED: 0}
