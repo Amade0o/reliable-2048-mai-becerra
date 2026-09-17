@@ -34,11 +34,13 @@ public class MainCLI {
             displayBoard();
             
             if (board.isWinningBoard()) {
+                assert(repOK());
                 System.out.println("🎉 Congratulations! You reached 2048! 🎉");
                 System.out.println("You can continue playing or quit.");
             }
             
             if (board.isLosingBoard()) {
+                assert(repOK());
                 System.out.println("💀 Game Over! No more moves available. 💀");
                 System.out.println("Final score: " + board.getScore());
                 break;
@@ -48,17 +50,19 @@ public class MainCLI {
             String input = scanner.nextLine().trim().toUpperCase();
             
             if (input.equals("Q")) {
+                assert(repOK());
                 System.out.println("Thanks for playing! Final score: " + board.getScore());
                 break;
             }
             
             boolean moved = false;
             switch (input) {
-                case "W": moved = board.moveUp(); break;
-                case "S": moved = board.moveDown(); break;
-                case "A": moved = board.moveLeft(); break;
-                case "D": moved = board.moveRight(); break;
+                case "W": moved = board.moveUp(); break;    //Estos "case" no contienen una llamada a repOK
+                case "S": moved = board.moveDown(); break;  //debido a que las llamadas a move() contienen su
+                case "A": moved = board.moveLeft(); break;  //propio repOK y antes de llamarlo tambien lo verificamos
+                case "D": moved = board.moveRight(); break; //en el input
                 default: 
+                    assert(repOK());
                     System.out.println("Invalid input! Use W, A, S, D, or Q.");
                     continue;
             }
@@ -73,6 +77,7 @@ public class MainCLI {
         }
         
         scanner.close();
+        assert(repOK());
     }
     
     /**
@@ -89,5 +94,9 @@ public class MainCLI {
 
     public Board getBoard(){
         return board;
+    }
+
+    private boolean repOK(){
+        return board.repOK(); //El repOK() de board contiene una llamada al repOK() de cada una de las celdas que contiene el board
     }
 }
