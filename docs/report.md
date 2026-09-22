@@ -9,22 +9,66 @@ En el assignment 3 se solicitó crear analiticas con evosuite, pero como debido 
 Se ejecutó randoop, los inputs generados 
 
 #### 1.2 
-#### What kinds of inputs did RANDOOP (not evosuite) generate?
+##### What kinds of inputs did RANDOOP (not evosuite) generate?
 - **Referencias nulas** son enviadas a constructores y metodos para verificar manejo de excepciones
 - **Conversiones de caracteres a enteros** (Casteos de primitivos): Se emplean literales de tipo char casteados implícita o explícitamente a enteros para definir coordenadas o dimensiones
 - **Valores Límite e Inválidos:** Dimensiones de tablero no válidas como 0 y -1, o tamaños inusuales como 1 y 97. También coordenadas fuera de rango como Position(2048, 0) o Position(32, 100) 
 - **Secuencias de números pseudoaleatorios fijas:** Arreglos de enteros repetitivos como new Integer[] { 100, 1, 1, 10, 1 } utilizados para instanciar la clase DeterministicRandom y controlar las posiciones de aparición de fichas
 - **Enumeraciones y tipos incompatibles:** Direcciones del tablero (Direction.UP, RIGHT, LEFT, DOWN), e instancias de objetos no relacionados (String, Board, short) pasados como parámetro a métodos .equals()
 
-### Are the test oracles (assertions) meaningful, or are they mostly regression assertions?
+##### Are the test oracles (assertions) meaningful, or are they mostly regression assertions?
 Son mayormente aserciones de regresión debido a la naturaleza de randoop
 
-### Are there any tests that seem fragile or hard to understand?
+##### Are there any tests that seem fragile or hard to understand?
 Si, los tests no son para nada faciles de leer, son en muchos casos muy largos, con llamadas complejas y muchas instrucciones.
 Ademas son fragiles debido a muchas dependencias de toString() para verificar el buen funcionamiento
 
 
 #### 1.3 Measure Coverage
+1-BaseLine
+- Jacoco
+  - Missed Instructions: 82%
+  - Missed Branches: 76%
+- Pitest
+  - Line coverage: 79%
+  - Mutation coverage: 67%
+  - Test strength: 80%
+
+2-Test manuales
+- Jacoco
+  - Missed Instructions: 
+  - Missed Branches: 
+- Pitest
+  - Line coverage: 
+  - Mutation coverage: 
+  - Test strength: 
+
+3-Evosuite-record
+- Jacoco
+  - Missed Instructions: 
+  - Missed Branches: 
+- Pitest
+  - Line coverage: 
+  - Mutation coverage: 
+  - Test strength: 
+
+4- Evosuite-repok-record
+  - Missed Instructions: 
+  - Missed Branches: 
+- Pitest
+  - Line coverage: 
+  - Mutation coverage: 
+  - Test strength: 
+
+5- Randoop-record
+  - Missed Instructions: 
+  - Missed Branches: 
+- Pitest
+  - Line coverage: 
+  - Mutation coverage: 
+  - Test strength: 
+
+
 
 
 
@@ -36,7 +80,6 @@ Ademas son fragiles debido a muchas dependencias de toString() para verificar el
 
 # BORRAR
 ### DUDAS:
-- Para cada fase dice que adjunte el fuzzer completo pero el fuzzer es solo de la fase 2 y es uno solo
 - Hicimos esta etapa con randoop, adjuntamos las pruebas hechas previamente con evosuite por las dudas? O hacemos todo puramente con randoop?
 
 ### RECORDATORIOS
