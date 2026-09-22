@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+</head>
+<body>
+
+
+<h1>DownMoveStrategy.java</h1>
+
+<table class="src">
+
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_1'/>
+1
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_1'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>package ar.edu.unrc.game2048.strategy;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_2'/>
+2
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_2'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_3'/>
+3
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_3'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import java.util.ArrayList;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_4'/>
+4
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_4'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import java.util.List;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_5'/>
+5
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_5'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_6'/>
+6
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_6'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import ar.edu.unrc.game2048.Board;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_7'/>
+7
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_7'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>import ar.edu.unrc.game2048.Cell;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_8'/>
+8
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_8'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_9'/>
+9
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_9'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>/*Moves the tiles downwards: the line is a column, read from bottom to top */</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_10'/>
+10
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_10'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>public class DownMoveStrategy implements MoveStrategy{</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_11'/>
+11
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_11'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_12'/>
+12
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_12'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    @Override</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_13'/>
+13
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_13'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    public List&#60;Cell&#62; extractLine(Board board, int index){</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_14'/>
+14
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_14'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>        List&#60;Cell&#62; column = new ArrayList&#60;&#62;();</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_15'/>
+15
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_15'>3</a>
+<span>
+
+1. extractLine : changed conditional boundary &rarr; KILLED<br/>
+
+2. extractLine : Replaced integer subtraction with addition &rarr; KILLED<br/>
+
+3. extractLine : negated conditional &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>            for (int row = board.getSize() - 1; row &#62;= 0; row--) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_16'/>
+16
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_16'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>                column.add(board.getCell(row, index));</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_17'/>
+17
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_17'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>            }</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_18'/>
+18
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_18'>1</a>
+<span>
+
+1. extractLine : replaced return value with Collections.emptyList for ar/edu/unrc/game2048/strategy/DownMoveStrategy::extractLine &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>        return column;</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_19'/>
+19
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_19'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    }</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_20'/>
+20
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_20'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''></span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_21'/>
+21
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_21'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    @Override</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_22'/>
+22
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_22'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>    public void writeLine(Board board, int column, List&#60;Cell&#62; line){</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_23'/>
+23
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_23'>3</a>
+<span>
+
+1. writeLine : Replaced integer subtraction with addition &rarr; KILLED<br/>
+
+2. writeLine : negated conditional &rarr; KILLED<br/>
+
+3. writeLine : changed conditional boundary &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>        for (int row = board.getSize() - 1; row &#62;= 0; row--) {</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_24'/>
+24
+</td>
+<td class='killed'>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_24'>3</a>
+<span>
+
+1. writeLine : Replaced integer subtraction with addition &rarr; KILLED<br/>
+
+2. writeLine : Replaced integer subtraction with addition &rarr; KILLED<br/>
+
+3. writeLine : removed call to ar/edu/unrc/game2048/Board::setCell &rarr; KILLED<br/>
+
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class='killed'>            board.setCell(row, column, line.get(board.getSize() - 1 - row));</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_25'/>
+25
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_25'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>        }</span></pre></td></tr>
+
+
+<tr>
+<td class='covered'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_26'/>
+26
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_26'></a>
+<span>
+</span>
+</span>
+</td>
+<td class='covered'><pre><span  class=''>    }</span></pre></td></tr>
+
+
+<tr>
+<td class='na'>
+<a name='org.pitest.mutationtest.report.html.SourceFile@373c8f35_27'/>
+27
+</td>
+<td class=''>
+<span class='pop'>
+<a href='#grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_27'></a>
+<span>
+</span>
+</span>
+</td>
+<td class=''><pre><span  class=''>}</span></pre></td></tr>
+
+
+
+<tr><td></td><td></td><td><h2>Mutations</h2></td></tr>
+
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@373c8f35_15'>15</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_15'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>extractLine<br/><b>Killed by : </b>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test40(ar.edu.unrc.game2048.Board_ESTest)]</span></span> changed conditional boundary &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>extractLine<br/><b>Killed by : </b>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test05(ar.edu.unrc.game2048.Board_ESTest)]</span></span> Replaced integer subtraction with addition &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>extractLine<br/><b>Killed by : </b>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test26(ar.edu.unrc.game2048.Board_ESTest)]</span></span> negated conditional &rarr; KILLED</p> 
+</td>
+</tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@373c8f35_18'>18</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_18'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>extractLine<br/><b>Killed by : </b>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test34(ar.edu.unrc.game2048.Board_ESTest)]</span></span> replaced return value with Collections.emptyList for ar/edu/unrc/game2048/strategy/DownMoveStrategy::extractLine &rarr; KILLED</p> 
+</td>
+</tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@373c8f35_23'>23</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_23'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>writeLine<br/><b>Killed by : </b>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test05(ar.edu.unrc.game2048.Board_ESTest)]</span></span> Replaced integer subtraction with addition &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>writeLine<br/><b>Killed by : </b>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test24(ar.edu.unrc.game2048.Board_ESTest)]</span></span> negated conditional &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>writeLine<br/><b>Killed by : </b>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test24(ar.edu.unrc.game2048.Board_ESTest)]</span></span> changed conditional boundary &rarr; KILLED</p> 
+</td>
+</tr>
+
+<tr>
+<td><a href='#org.pitest.mutationtest.report.html.SourceFile@373c8f35_24'>24</a></td> 
+<td></td>
+<td>
+
+<a name='grouporg.pitest.mutationtest.report.html.SourceFile@373c8f35_24'/> 
+
+<p class='KILLED'><span class='pop'>1.<span><b>1</b><br/><b>Location : </b>writeLine<br/><b>Killed by : </b>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test05(ar.edu.unrc.game2048.Board_ESTest)]</span></span> Replaced integer subtraction with addition &rarr; KILLED</p> <p class='KILLED'><span class='pop'>2.<span><b>2</b><br/><b>Location : </b>writeLine<br/><b>Killed by : </b>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test05(ar.edu.unrc.game2048.Board_ESTest)]</span></span> Replaced integer subtraction with addition &rarr; KILLED</p> <p class='KILLED'><span class='pop'>3.<span><b>3</b><br/><b>Location : </b>writeLine<br/><b>Killed by : </b>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test24(ar.edu.unrc.game2048.Board_ESTest)]</span></span> removed call to ar/edu/unrc/game2048/Board::setCell &rarr; KILLED</p> 
+</td>
+</tr>
+
+</table>
+
+
+<h2>Active mutators</h2>
+<ul>
+
+<li class='mutator'>CONDITIONALS_BOUNDARY</li>
+
+<li class='mutator'>EMPTY_RETURNS</li>
+
+<li class='mutator'>FALSE_RETURNS</li>
+
+<li class='mutator'>INCREMENTS</li>
+
+<li class='mutator'>INVERT_NEGS</li>
+
+<li class='mutator'>MATH</li>
+
+<li class='mutator'>NEGATE_CONDITIONALS</li>
+
+<li class='mutator'>NULL_RETURNS</li>
+
+<li class='mutator'>PRIMITIVE_RETURNS</li>
+
+<li class='mutator'>TRUE_RETURNS</li>
+
+<li class='mutator'>VOID_METHOD_CALLS</li>
+
+</ul>
+
+<h2>Tests examined</h2>
+<ul>
+<li>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test05(ar.edu.unrc.game2048.Board_ESTest)] (1 ms)</li><li>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test04(ar.edu.unrc.game2048.Board_ESTest)] (4 ms)</li><li>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test03(ar.edu.unrc.game2048.Board_ESTest)] (5 ms)</li><li>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test00(ar.edu.unrc.game2048.Board_ESTest)] (24 ms)</li><li>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test34(ar.edu.unrc.game2048.Board_ESTest)] (2 ms)</li><li>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test37(ar.edu.unrc.game2048.Board_ESTest)] (1 ms)</li><li>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test43(ar.edu.unrc.game2048.Board_ESTest)] (1 ms)</li><li>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test38(ar.edu.unrc.game2048.Board_ESTest)] (3 ms)</li><li>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test42(ar.edu.unrc.game2048.Board_ESTest)] (2 ms)</li><li>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test23(ar.edu.unrc.game2048.Board_ESTest)] (4 ms)</li><li>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test08(ar.edu.unrc.game2048.Board_ESTest)] (1 ms)</li><li>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test44(ar.edu.unrc.game2048.Board_ESTest)] (1 ms)</li><li>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test24(ar.edu.unrc.game2048.Board_ESTest)] (4 ms)</li><li>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test30(ar.edu.unrc.game2048.Board_ESTest)] (6 ms)</li><li>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test41(ar.edu.unrc.game2048.Board_ESTest)] (1 ms)</li><li>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test39(ar.edu.unrc.game2048.Board_ESTest)] (6 ms)</li><li>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test36(ar.edu.unrc.game2048.Board_ESTest)] (1 ms)</li><li>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test26(ar.edu.unrc.game2048.Board_ESTest)] (1 ms)</li><li>ar.edu.unrc.game2048.Board_ESTest.[engine:junit-vintage]/[runner:ar.edu.unrc.game2048.Board_ESTest]/[test:test40(ar.edu.unrc.game2048.Board_ESTest)] (2 ms)</li>
+</ul>
+
+<br/>
+
+Report generated by <a href='https://pitest.org'>PIT</a> 1.15.0
+
+</body>
+</html>
