@@ -68,7 +68,71 @@ Ademas son fragiles debido a muchas dependencias de toString() para verificar el
   - Mutation coverage: 
   - Test strength: 
 
+## Cómo se eliminó el flakiness en los tests de EvoSuite
 
+Los tests generados por EvoSuite para Board eran flaky: dependían de
+Math.random() (a través de MathRandom, la implementación por defecto de
+IRandom) y las aserciones de regresión que EvoSuite genera capturan el
+valor devuelto por el azar en el momento de la generación, no una propiedad
+del programa. Al correr esos tests después, Math.random() devuelve otro
+valor y la aserción falla — en una corrida real, 16 de 70 tests de
+Board_ESTest fallaron por esta razón.
+
+*Por qué Randoop no sufre este problema.* Randoop tiene dos archivos de
+configuración (scripts-configs/randoop-omit-classes.txt y
+randoop-omit-methods.txt) que excluyen por completo la clase MathRandom
+y los constructores Board()/Board(int) de su exploración. Estructuralmente,
+Randoop no puede construir un Board con azar real: el único IRandom que
+le queda disponible es DeterministicRandom (una implementación que
+devuelve una secuencia fija de enteros pasada por parámetro).
+
+*Por qué EvoSuite sí lo sufre.* EvoSuite no tiene un mecanismo equivalente
+configurado en este proyecto (ni runEvosuite.sh ni la versión 1.0.6 traen
+una opción tipo "prohibí instanciar esta clase"). Su búsqueda genética
+explora libremente los 5 constructores de Board y las dos implementaciones
+de IRandom que encuentra en el classpath (MathRandom y
+DeterministicRandom). Que exista el constructor Board(IRandom) le da a
+EvoSuite la opción de generar tests deterministas, pero no le quita la
+opción de seguir usando MathRandom. Además, EvoSuite normalmente evita
+este problema mockeando Math.random() con su propio runtime
+(org.evosuite.runtime.*) tanto en la generación como en la reproducción de
+los tests, pero ese runtime no es compatible con Java 17+ (ver comentario en
+pom.xml), así que el proyecto genera los tests con
+-Dno_runtime_dependency=true, que desactiva justamente ese mecanismo de
+protección.
+
+*Solución aplicada.* Se replicó el enfoque de Randoop pero a nivel de
+classpath en lugar de configuración: antes de invocar a EvoSuite sobre
+Board, se sacó temporalmente MathRandom.class de target/classes
+(dejando DeterministicRandom.class e IRandom.class), se generaron los
+tests, y recién después se restauró MathRandom.class para poder compilar y
+correr la suite con Maven. Sin MathRandom disponible, EvoSuite no tuvo otra
+opción que usar DeterministicRandom para construir todos los Board que
+necesitó (0 apariciones de new MathRandom(...) en el Board_ESTest.java
+resultante, contra 9 antes de aplicar esto).
+
+Este truco tuvo un efecto secundario: EvoSuite, al no encontrar
+MathRandom.class, generó 5 tests que capturaban un NoClassDefFoundError
+al invocar new Board()/new Board(int) como si fuera el comportamiento
+esperado de la clase (test02, test07, test11, test12, test21).
+Ese error es un artefacto del truco de classpath, no un comportamiento real
+del programa — una vez restaurado MathRandom.class esos constructores
+vuelven a funcionar normalmente y esos 5 tests hubiesen fallado. Se
+eliminaron esos 5 métodos del archivo generado, quedando 40 tests en
+Board_ESTest (más los 25 de Cell_ESTest, que no usa IRandom y no
+necesitó este tratamiento).
+
+*Verificación.* Se corrió la suite resultante dos veces seguidas con
+mvn test -Dtest=Board_ESTest,Cell_ESTest: 65/65 tests pasaron en ambas
+corridas, 0 fallos, confirmando que ya no depende de Math.random() sin
+controlar.
+
+*Resultado.* Con la suite ya determinista, se midió jacoco y PIT
+exclusivamente sobre estos 65 tests (excluyendo los tests manuales y los de
+Randoop) y se guardaron los tests generados junto con los reportes en
+reportes/evosuite-noflaky-record/, sin sobrescribir los records anteriores
+(evosuite-record/, evosuite-repok-record/) para mantener el historial de
+comparación.
 
 
 
