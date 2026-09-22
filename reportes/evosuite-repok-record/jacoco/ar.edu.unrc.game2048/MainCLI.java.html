@@ -8,87 +8,96 @@ import java.util.Scanner;
  * This class handles user input and displays the board state.
  * It demonstrates how to use the Board class and its methods.
  */
-public class MainCLI {
+<span class="nc" id="L11">public class MainCLI {</span>
     private final Board board;
     private final Scanner scanner;
     
-<span class="fc" id="L15">    public MainCLI() {</span>
-<span class="fc" id="L16">        this.board = new Board();</span>
-<span class="fc" id="L17">        this.scanner = new Scanner(System.in);</span>
-<span class="fc" id="L18">    }</span>
+<span class="nc" id="L15">    public MainCLI() {</span>
+<span class="nc" id="L16">        this.board = new Board();</span>
+<span class="nc" id="L17">        this.scanner = new Scanner(System.in);</span>
+<span class="nc" id="L18">    }</span>
 
-<span class="fc" id="L20">    public MainCLI(Board board) {</span>
-<span class="fc" id="L21">        this.board = board;</span>
-<span class="fc" id="L22">        this.scanner = new Scanner(System.in);</span>
-<span class="fc" id="L23">    }</span>
+<span class="nc" id="L20">    public MainCLI(Board board) {</span>
+<span class="nc" id="L21">        this.board = board;</span>
+<span class="nc" id="L22">        this.scanner = new Scanner(System.in);</span>
+<span class="nc" id="L23">    }</span>
     
     /**
      * Main game loop.
      */
     public void play() {
-<span class="fc" id="L29">        System.out.println(&quot;=== 2048 Game ===&quot;);</span>
-<span class="fc" id="L30">        System.out.println(&quot;Controls: W(up), S(down), A(left), D(right), Q(quit)&quot;);</span>
-<span class="fc" id="L31">        System.out.println();</span>
+<span class="nc" id="L29">        System.out.println(&quot;=== 2048 Game ===&quot;);</span>
+<span class="nc" id="L30">        System.out.println(&quot;Controls: W(up), S(down), A(left), D(right), Q(quit)&quot;);</span>
+<span class="nc" id="L31">        System.out.println();</span>
         
         while (true) {
-<span class="fc" id="L34">            displayBoard();</span>
+<span class="nc" id="L34">            displayBoard();</span>
             
-<span class="fc bfc" id="L36" title="All 2 branches covered.">            if (board.isWinningBoard()) {</span>
-<span class="fc" id="L37">                System.out.println(&quot;🎉 Congratulations! You reached 2048! 🎉&quot;);</span>
-<span class="fc" id="L38">                System.out.println(&quot;You can continue playing or quit.&quot;);</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">            if (board.isWinningBoard()) {</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">                assert(repOK());</span>
+<span class="nc" id="L38">                System.out.println(&quot;🎉 Congratulations! You reached 2048! 🎉&quot;);</span>
+<span class="nc" id="L39">                System.out.println(&quot;You can continue playing or quit.&quot;);</span>
             }
             
-<span class="fc bfc" id="L41" title="All 2 branches covered.">            if (board.isLosingBoard()) {</span>
-<span class="fc" id="L42">                System.out.println(&quot;💀 Game Over! No more moves available. 💀&quot;);</span>
-<span class="fc" id="L43">                System.out.println(&quot;Final score: &quot; + board.getScore());</span>
-<span class="fc" id="L44">                break;</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">            if (board.isLosingBoard()) {</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">                assert(repOK());</span>
+<span class="nc" id="L44">                System.out.println(&quot;💀 Game Over! No more moves available. 💀&quot;);</span>
+<span class="nc" id="L45">                System.out.println(&quot;Final score: &quot; + board.getScore());</span>
+<span class="nc" id="L46">                break;</span>
             }
             
-<span class="fc" id="L47">            System.out.print(&quot;Enter move: &quot;);</span>
-<span class="fc" id="L48">            String input = scanner.nextLine().trim().toUpperCase();</span>
+<span class="nc" id="L49">            System.out.print(&quot;Enter move: &quot;);</span>
+<span class="nc" id="L50">            String input = scanner.nextLine().trim().toUpperCase();</span>
             
-<span class="fc bfc" id="L50" title="All 2 branches covered.">            if (input.equals(&quot;Q&quot;)) {</span>
-<span class="fc" id="L51">                System.out.println(&quot;Thanks for playing! Final score: &quot; + board.getScore());</span>
-<span class="fc" id="L52">                break;</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">            if (input.equals(&quot;Q&quot;)) {</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">                assert(repOK());</span>
+<span class="nc" id="L54">                System.out.println(&quot;Thanks for playing! Final score: &quot; + board.getScore());</span>
+<span class="nc" id="L55">                break;</span>
             }
             
-<span class="fc" id="L55">            boolean moved = false;</span>
-<span class="fc bfc" id="L56" title="All 5 branches covered.">            switch (input) {</span>
-<span class="fc" id="L57">                case &quot;W&quot;: moved = board.moveUp(); break;</span>
-<span class="fc" id="L58">                case &quot;S&quot;: moved = board.moveDown(); break;</span>
-<span class="fc" id="L59">                case &quot;A&quot;: moved = board.moveLeft(); break;</span>
-<span class="fc" id="L60">                case &quot;D&quot;: moved = board.moveRight(); break;</span>
+<span class="nc" id="L58">            boolean moved = false;</span>
+<span class="nc bnc" id="L59" title="All 5 branches missed.">            switch (input) {</span>
+<span class="nc" id="L60">                case &quot;W&quot;: moved = board.moveUp(); break;    //Estos &quot;case&quot; no contienen una llamada a repOK</span>
+<span class="nc" id="L61">                case &quot;S&quot;: moved = board.moveDown(); break;  //debido a que las llamadas a move() contienen su</span>
+<span class="nc" id="L62">                case &quot;A&quot;: moved = board.moveLeft(); break;  //propio repOK y antes de llamarlo tambien lo verificamos</span>
+<span class="nc" id="L63">                case &quot;D&quot;: moved = board.moveRight(); break; //en el input</span>
                 default: 
-<span class="fc" id="L62">                    System.out.println(&quot;Invalid input! Use W, A, S, D, or Q.&quot;);</span>
-<span class="fc" id="L63">                    continue;</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">                    assert(repOK());</span>
+<span class="nc" id="L66">                    System.out.println(&quot;Invalid input! Use W, A, S, D, or Q.&quot;);</span>
+<span class="nc" id="L67">                    continue;</span>
             }
             
-<span class="fc bfc" id="L66" title="All 2 branches covered.">            if (moved) {</span>
-<span class="fc" id="L67">                System.out.println(&quot;Tile moved!&quot;);</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">            if (moved) {</span>
+<span class="nc" id="L71">                System.out.println(&quot;Tile moved!&quot;);</span>
             } else {
-<span class="fc" id="L69">                System.out.println(&quot;No tiles moved. Try a different direction.&quot;);</span>
+<span class="nc" id="L73">                System.out.println(&quot;No tiles moved. Try a different direction.&quot;);</span>
             }
             
-<span class="fc" id="L72">            System.out.println();</span>
-<span class="fc" id="L73">        }</span>
+<span class="nc" id="L76">            System.out.println();</span>
+<span class="nc" id="L77">        }</span>
         
-<span class="fc" id="L75">        scanner.close();</span>
-<span class="fc" id="L76">    }</span>
+<span class="nc" id="L79">        scanner.close();</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">        assert(repOK());</span>
+<span class="nc" id="L81">    }</span>
     
     /**
      * Displays the current board state.
      */
     private void displayBoard() {
-<span class="fc" id="L82">        System.out.println(board); </span>
-<span class="fc" id="L83">    }</span>
+<span class="nc" id="L87">        System.out.println(board); </span>
+<span class="nc" id="L88">    }</span>
     
     public static void main(String[] args) {
-<span class="nc" id="L86">        MainCLI game = new MainCLI();</span>
-<span class="nc" id="L87">        game.play();</span>
-<span class="nc" id="L88">    }</span>
+<span class="nc" id="L91">        MainCLI game = new MainCLI();</span>
+<span class="nc" id="L92">        game.play();</span>
+<span class="nc" id="L93">    }</span>
 
     public Board getBoard(){
-<span class="fc" id="L91">        return board;</span>
+<span class="nc" id="L96">        return board;</span>
+    }
+
+    private boolean repOK(){
+<span class="nc" id="L100">        return board.repOK(); //El repOK() de board contiene una llamada al repOK() de cada una de las celdas que contiene el board</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

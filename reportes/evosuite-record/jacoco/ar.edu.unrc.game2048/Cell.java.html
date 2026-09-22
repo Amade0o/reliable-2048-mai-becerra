@@ -2,6 +2,8 @@
 
 import java.util.Objects;
 
+import randoop.CheckRep;
+
 /**
  * Represents a single cell in the 2048 game board.
  * A cell is either empty (value = 0) or contains a power of two (2, 4, 8, ...).
@@ -22,7 +24,7 @@ public final class Cell {
     /**
      * The empty cell singleton (value = 0).
      */
-<span class="fc" id="L25">    public static final Cell EMPTY = new Cell(0);</span>
+<span class="fc" id="L27">    public static final Cell EMPTY = new Cell(0);</span>
     
     /**
      * Creates a new cell with the given value.
@@ -30,12 +32,13 @@ public final class Cell {
      * @param value the value of the cell (must be 0 or a power of two)
      * @throws IllegalArgumentException if the value is negative or not a power of two (except 0)
      */
-<span class="fc" id="L33">    public Cell(int value) {</span>
-<span class="fc bfc" id="L34" title="All 6 branches covered.">        if (value &lt; 0 || (value != 0 &amp;&amp; (value &amp; (value - 1)) != 0)) {</span>
-<span class="fc" id="L35">            throw new IllegalArgumentException(&quot;Cell value cannot be negative: &quot; + value);</span>
+<span class="fc" id="L35">    public Cell(int value) {</span>
+<span class="fc bfc" id="L36" title="All 6 branches covered.">        if (value &lt; 0 || (value != 0 &amp;&amp; (value &amp; (value - 1)) != 0)) {</span>
+<span class="fc" id="L37">            throw new IllegalArgumentException(&quot;Cell value cannot be negative: &quot; + value);</span>
         }
-<span class="fc" id="L37">        this.value = value;</span>
-<span class="fc" id="L38">    }</span>
+<span class="fc" id="L39">        this.value = value;</span>
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">        assert repOK();</span>
+<span class="fc" id="L41">    }</span>
     
     /**
      * Checks if this cell is empty.
@@ -43,7 +46,7 @@ public final class Cell {
      * @return true if the cell is empty (value == 0), false otherwise
      */
     public boolean isEmpty() {
-<span class="fc bfc" id="L46" title="All 2 branches covered.">        return value == 0;</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        return value == 0;</span>
     }
     
     /**
@@ -52,7 +55,28 @@ public final class Cell {
      * @return the cell value (0 for empty cells)
      */
     public int getValue() {
-<span class="fc" id="L55">        return value;</span>
+<span class="fc" id="L58">        return value;</span>
+    }
+
+    /**
+     * Checks whether this cell satisfies its representation invariant.
+     *
+     * @return true if the value is zero or a positive power of two
+     */
+    @CheckRep 
+    public boolean repOK() {
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">        if (value &lt; 0) {</span>
+<span class="nc" id="L69">            return false;</span>
+        }
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (value == 0) {</span>
+<span class="fc" id="L72">            return true;</span>
+        }
+
+<span class="fc" id="L75">        int remaining = value;</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        while (remaining % 2 == 0) {</span>
+<span class="fc" id="L77">            remaining /= 2;</span>
+        }
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">        return remaining == 1;</span>
     }
     
     /**
@@ -63,10 +87,10 @@ public final class Cell {
      * @return true if the cells can merge, false otherwise
      */
     public boolean canMergeWith(Cell other) {
-<span class="fc bfc" id="L66" title="All 4 branches covered.">        if (this.isEmpty() || other.isEmpty()) {</span>
-<span class="fc" id="L67">            return false;</span>
+<span class="fc bfc" id="L90" title="All 4 branches covered.">        if (this.isEmpty() || other.isEmpty()) {</span>
+<span class="fc" id="L91">            return false;</span>
         }
-<span class="fc bfc" id="L69" title="All 2 branches covered.">        return this.value == other.value;</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        return this.value == other.value;</span>
     }
     
     /**
@@ -78,12 +102,12 @@ public final class Cell {
      * @throws IllegalArgumentException if the cells cannot be merged
      */
     public Cell mergeWith(Cell other) {
-<span class="fc bfc" id="L81" title="All 2 branches covered.">        if (!canMergeWith(other)) {</span>
-<span class="fc" id="L82">            throw new IllegalArgumentException(</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        if (!canMergeWith(other)) {</span>
+<span class="fc" id="L106">            throw new IllegalArgumentException(</span>
                 &quot;Cannot merge cells: &quot; + this + &quot; and &quot; + other
             );
         }
-<span class="fc" id="L86">        return new Cell(this.value * 2);</span>
+<span class="fc" id="L110">        return new Cell(this.value * 2);</span>
     }
 
     /**
@@ -95,10 +119,10 @@ public final class Cell {
      */
     @Override
     public boolean equals(Object o) {
-<span class="fc bfc" id="L98" title="All 2 branches covered.">        if (this == o) return true;</span>
-<span class="fc bfc" id="L99" title="All 4 branches covered.">        if (o == null || getClass() != o.getClass()) return false;</span>
-<span class="fc" id="L100">        Cell cell = (Cell) o;</span>
-<span class="fc bfc" id="L101" title="All 2 branches covered.">        return value == cell.value;</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">        if (this == o) return true;</span>
+<span class="fc bfc" id="L123" title="All 4 branches covered.">        if (o == null || getClass() != o.getClass()) return false;</span>
+<span class="fc" id="L124">        Cell cell = (Cell) o;</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">        return value == cell.value;</span>
     }
     
     /**
@@ -109,7 +133,7 @@ public final class Cell {
      */
     @Override
     public int hashCode() {
-<span class="fc" id="L112">        return Objects.hash(value);</span>
+<span class="fc" id="L136">        return Objects.hash(value);</span>
     }
     
     /**
@@ -120,7 +144,7 @@ public final class Cell {
      */
     @Override
     public String toString() {
-<span class="fc bfc" id="L123" title="All 2 branches covered.">        return value == 0 ? &quot;.&quot; : String.valueOf(value);</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">        return value == 0 ? &quot;.&quot; : String.valueOf(value);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

@@ -1,10 +1,12 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
 2048-game,ar.edu.unrc.game2048.strategy,RightMoveStrategy,0,48,0,4,0,8,0,5,0,3
 2048-game,ar.edu.unrc.game2048.strategy,DownMoveStrategy,0,48,0,4,0,8,0,5,0,3
-2048-game,ar.edu.unrc.game2048.strategy,UpMoveStrategy,0,41,0,4,0,8,0,5,0,3
 2048-game,ar.edu.unrc.game2048.strategy,LeftMoveStrategy,0,41,0,4,0,8,0,5,0,3
+2048-game,ar.edu.unrc.game2048.strategy,UpMoveStrategy,0,41,0,4,0,8,0,5,0,3
 2048-game,ar.edu.unrc.game2048,Cell,7,164,3,33,1,28,3,25,0,10
+2048-game,ar.edu.unrc.game2048,Board.Position,4,69,3,7,0,10,3,6,0,4
 2048-game,ar.edu.unrc.game2048,Board.Direction,0,27,0,0,0,2,0,1,0,1
-2048-game,ar.edu.unrc.game2048,Board,46,822,18,116,3,148,18,74,0,25
-2048-game,ar.edu.unrc.game2048,Board.Position,2,71,2,8,0,10,2,7,0,4
-2048-game,ar.edu.unrc.game2048,MainCLI,7,150,0,13,3,42,1,13,1,5
+2048-game,ar.edu.unrc.game2048,Board,91,809,30,106,10,149,29,66,1,26
+2048-game,ar.edu.unrc.game2048,MainCLI,202,0,23,0,52,0,21,0,8,0
+2048-game,ar.edu.unrc.game2048.RandomNumGeneration,DeterministicRandom,42,0,4,0,9,0,4,0,2,0
+2048-game,ar.edu.unrc.game2048.RandomNumGeneration,MathRandom,0,10,0,0,0,4,0,2,0,2

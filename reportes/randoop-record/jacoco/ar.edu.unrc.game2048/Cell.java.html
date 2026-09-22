@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Cell.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">2048-game</a> &gt; <a href="index.source.html" class="el_package">ar.edu.unrc.game2048</a> &gt; <span class="el_source">Cell.java</span></div><h1>Cell.java</h1><pre class="source lang-java linenums">package ar.edu.unrc.game2048;
+
+import java.util.Objects;
+
+import randoop.CheckRep;
+
+/**
+ * Represents a single cell in the 2048 game board.
+ * A cell is either empty (value = 0) or contains a power of two (2, 4, 8, ...).
+ * 
+ * Representation Invariant:
+ * - value &gt;= 0
+ * - if value &gt; 0, then value is a power of two 
+ * 
+ * Immutable class - once created, a Cell cannot change its value.
+ */
+public final class Cell {
+
+    /**
+     * Cell value (0 for empty, or a power of two).
+     */
+    private final int value;
+    
+    /**
+     * The empty cell singleton (value = 0).
+     */
+<span class="fc" id="L27">    public static final Cell EMPTY = new Cell(0);</span>
+    
+    /**
+     * Creates a new cell with the given value.
+     * 
+     * @param value the value of the cell (must be 0 or a power of two)
+     * @throws IllegalArgumentException if the value is negative or not a power of two (except 0)
+     */
+<span class="fc" id="L35">    public Cell(int value) {</span>
+<span class="pc bpc" id="L36" title="1 of 6 branches missed.">        if (value &lt; 0 || (value != 0 &amp;&amp; (value &amp; (value - 1)) != 0)) {</span>
+<span class="fc" id="L37">            throw new IllegalArgumentException(&quot;Cell value cannot be negative: &quot; + value);</span>
+        }
+<span class="fc" id="L39">        this.value = value;</span>
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">        assert repOK();</span>
+<span class="fc" id="L41">    }</span>
+    
+    /**
+     * Checks if this cell is empty.
+     * 
+     * @return true if the cell is empty (value == 0), false otherwise
+     */
+    public boolean isEmpty() {
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        return value == 0;</span>
+    }
+    
+    /**
+     * Gets the numeric value of this cell.
+     * 
+     * @return the cell value (0 for empty cells)
+     */
+    public int getValue() {
+<span class="fc" id="L58">        return value;</span>
+    }
+
+    /**
+     * Checks whether this cell satisfies its representation invariant.
+     *
+     * @return true if the value is zero or a positive power of two
+     */
+    @CheckRep 
+    public boolean repOK() {
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">        if (value &lt; 0) {</span>
+<span class="nc" id="L69">            return false;</span>
+        }
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (value == 0) {</span>
+<span class="fc" id="L72">            return true;</span>
+        }
+
+<span class="fc" id="L75">        int remaining = value;</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        while (remaining % 2 == 0) {</span>
+<span class="fc" id="L77">            remaining /= 2;</span>
+        }
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">        return remaining == 1;</span>
+    }
+    
+    /**
+     * Checks if this cell can merge with another cell.
+     * Two cells can merge if they are both non-empty and have the same value.
+     * 
+     * @param other the other cell to check merge compatibility with
+     * @return true if the cells can merge, false otherwise
+     */
+    public boolean canMergeWith(Cell other) {
+<span class="pc bpc" id="L90" title="1 of 4 branches missed.">        if (this.isEmpty() || other.isEmpty()) {</span>
+<span class="fc" id="L91">            return false;</span>
+        }
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        return this.value == other.value;</span>
+    }
+    
+    /**
+     * Creates a new cell that is the result of merging this cell with another.
+     * The resulting cell has double the value.
+     * 
+     * @param other the cell to merge with (must have the same value)
+     * @return a new Cell with the merged value
+     * @throws IllegalArgumentException if the cells cannot be merged
+     */
+    public Cell mergeWith(Cell other) {
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        if (!canMergeWith(other)) {</span>
+<span class="fc" id="L106">            throw new IllegalArgumentException(</span>
+                &quot;Cannot merge cells: &quot; + this + &quot; and &quot; + other
+            );
+        }
+<span class="fc" id="L110">        return new Cell(this.value * 2);</span>
+    }
+
+    /**
+     * Compares this cell with another object for equality.
+     * Two cells are equal if they have the same value.
+     * 
+     * @param o the object to compare with
+     * @return true if the object is a Cell with the same value, false otherwise
+     */
+    @Override
+    public boolean equals(Object o) {
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        if (this == o) return true;</span>
+<span class="pc bpc" id="L123" title="1 of 4 branches missed.">        if (o == null || getClass() != o.getClass()) return false;</span>
+<span class="fc" id="L124">        Cell cell = (Cell) o;</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">        return value == cell.value;</span>
+    }
+    
+    /**
+     * Returns the hash code for this cell.
+     * Cells with the same value will have the same hash code.
+     * 
+     * @return the hash code based on the cell's value
+     */
+    @Override
+    public int hashCode() {
+<span class="nc" id="L136">        return Objects.hash(value);</span>
+    }
+    
+    /**
+     * Returns a string representation of this cell.
+     * Empty cells (value = 0) are represented as &quot;.&quot;, non-empty cells as their numeric value.
+     * 
+     * @return &quot;.&quot; if the cell is empty, otherwise the numeric value as a string
+     */
+    @Override
+    public String toString() {
+<span class="fc bfc" id="L147" title="All 2 branches covered.">        return value == 0 ? &quot;.&quot; : String.valueOf(value);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

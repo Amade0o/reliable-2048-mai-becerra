@@ -7,22 +7,22 @@ import ar.edu.unrc.game2048.Board;
 import ar.edu.unrc.game2048.Cell;
 
 /*Moves the tiles to the left: the line is a row, read from left to right */
-<span class="fc" id="L10">public class LeftMoveStrategy implements MoveStrategy{</span>
+<span class="nc" id="L10">public class LeftMoveStrategy implements MoveStrategy{</span>
 
     @Override
     public List&lt;Cell&gt; extractLine(Board board, int index){
-<span class="fc" id="L14">        List&lt;Cell&gt; rowList = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L15" title="All 2 branches covered.">            for (int col = 0; col &lt; board.getSize(); col++) {</span>
-<span class="fc" id="L16">                rowList.add(board.getCell(index, col));</span>
+<span class="nc" id="L14">        List&lt;Cell&gt; rowList = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L15" title="All 2 branches missed.">            for (int col = 0; col &lt; board.getSize(); col++) {</span>
+<span class="nc" id="L16">                rowList.add(board.getCell(index, col));</span>
             }
-<span class="fc" id="L18">        return rowList;</span>
+<span class="nc" id="L18">        return rowList;</span>
     }
 
     @Override
     public void writeLine(Board board, int row, List&lt;Cell&gt; line){
-<span class="fc bfc" id="L23" title="All 2 branches covered.">        for (int col = 0; col &lt; board.getSize(); col++) {</span>
-<span class="fc" id="L24">            board.setCell(row, col, line.get(col));</span>
+<span class="nc bnc" id="L23" title="All 2 branches missed.">        for (int col = 0; col &lt; board.getSize(); col++) {</span>
+<span class="nc" id="L24">            board.setCell(row, col, line.get(col));</span>
         }
-<span class="fc" id="L26">    }</span>
+<span class="nc" id="L26">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>
