@@ -156,16 +156,18 @@ el parsing de comandos del MainCLI, no solo la lógica del tablero.
   mutation score), porque fueron escritos entendiendo la especificación del
   juego y apuntando deliberadamente a los casos límite del dominio (bordes
   del tablero, fusiones de fichas, condiciones de fin de juego).
-- *Entre las técnicas automáticas*, Randoop resultó más efectivo "out of
-  the box" que EvoSuite para este proyecto, tanto en cobertura de líneas/ramas
-  como en test strength, principalmente porque no depende de un runtime
-  incompatible con la versión de Java del proyecto y porque su exploración
-  feedback-directed encontró casos límite de validación (constructores con
-  dimensiones inválidas, posiciones fuera de rango) sin que se le indicara
-  nada especial. Sin embargo, EvoSuite mostró el mayor salto de calidad al
-  agregarle un oráculo explícito (repOK()), lo que sugiere que su
-  búsqueda dirigida por fitness se beneficia mucho más que Randoop de tener
-  una señal adicional de "estado inválido" para guiar la generación.
+- *Entre las técnicas automáticas*, la comparación depende de la métrica.
+  En cobertura pura, EvoSuite con repOK() como oráculo superó a Randoop
+  (78% líneas / 72% ramas frente a 72% líneas / 61% ramas), y ambas
+  quedaron empatadas en mutation score (56%). Randoop, en cambio, ganó
+  claramente en test strength (86% frente a 68%), y lo logró sin depender
+  de un runtime incompatible con la versión de Java del proyecto ni
+  necesitar que se le indicara un oráculo explícito, algo que a EvoSuite
+  sin repOK() le costó bastante (61% líneas / 59% ramas). Esto sugiere
+  que la búsqueda dirigida por fitness de EvoSuite se beneficia mucho más
+  que Randoop de tener una señal adicional de "estado inválido" para
+  guiar la generación, mientras que Randoop es más efectivo cuando no se
+  cuenta con esa señal.
 - *Como técnica de *bug finding**, el fuzzer es cualitativamente distinto
   a EvoSuite/Randoop: en vez de maximizar cobertura de código a nivel de
   unidad, ejercita el programa completo a través de su interfaz real (stdin
@@ -186,31 +188,3 @@ el parsing de comandos del MainCLI, no solo la lógica del tablero.
   que ya estaba por los tests manuales y repOK(), ninguna de las técnicas
   automáticas encontró bugs nuevos, pero Randoop fue la más "efectiva" en
   términos de costo/beneficio (cobertura razonable sin configuración extra).
-
-
-
-
-
-
-
-
-
-# BORRAR
-### DUDAS:
-- Hicimos esta etapa con randoop, adjuntamos las pruebas hechas previamente con evosuite por las dudas? O hacemos todo puramente con randoop?
-
-### RECORDATORIOS
-- Se cambiaron constructores
-- Se crearon clases 
-
-### CONSIGNA REPORTE: borrar
-
-For each phase, include in your repository:
-- The generated test files (EvoSuite output, committed to an appropriate testing directory)
-- Your completed `fuzzer.py`
-- A short written report (`report.md`) covering:
-  - Coverage and mutation scores for each technique (tables are encouraged)
-  - A comparison of EvoSuite vs. Randoop: similarities, differences, strengths, weaknesses
-  - A description of how the fuzzer works and what you implemented in `fuzz()`
-  - Any bugs found, with a minimal reproducing input if applicable
-  - Reflections: which technique was most effective for this program, and why?
