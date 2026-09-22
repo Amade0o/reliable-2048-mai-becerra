@@ -1,5 +1,5 @@
 # REPORT.MD
-## REPORT PARA EL ASSIGNMENT 3. 
+## Notas y consultas
 
 ### Nota
 En el assignment 3 se solicitó crear analiticas con evosuite, pero como debido a que se nos dio la opcion previamente de utilizar evosuite y esas analiticas ya estaban creadas, en esta etapa se utilizó randoop para la generacion de tests. Ambas tecnologias se pueden correr mediante la ejecucion de los scripts de scripts-config/runEvosuite.sh y scripts-config/runRandoop.sh
@@ -24,115 +24,168 @@ Si, los tests no son para nada faciles de leer, son en muchos casos muy largos, 
 Ademas son fragiles debido a muchas dependencias de toString() para verificar el buen funcionamiento
 
 
-#### 1.3 Measure Coverage
-1-BaseLine
-- Jacoco
-  - Instruction coverage: 82%
-  - Branch coverage: 77%
-- Pitest
-  - Line coverage: 79%
-  - Mutation coverage: 67%
-  - Test strength: 80%
+## REPORT PARA EL ASSIGNMENT 3. 
 
-2-Test manuales
-- Jacoco
-  - Instruction coverage: 94%
-  - Branch coverage: 96%
-- Pitest
-  - Line coverage: 97%
-  - Mutation coverage: 91%
-  - Test strength: 94%
+### Assignment 3 — Comparación EvoSuite vs. Randoop, Fuzzer y Reflexiones
 
-3-Evosuite-record
-- Jacoco
-  - Instruction coverage: 61%
-  - Branch coverage: 60%
-- Pitest
-  - Line coverage: 57%
-  - Mutation coverage: 46%
-  - Test strength: 75%
+#### Resumen de métricas por técnica
 
-4- Evosuite-repok-record
-  - Instruction coverage: 78%
-  - Branch coverage: 72%
-- Pitest
-  - Line coverage: 76%
-  - Mutation coverage: 56%
-  - Test strength: 68%
+| Técnica | Line Cov. (JaCoCo) | Branch Cov. (JaCoCo) | Mutation Cov. (PIT) | Test Strength (PIT) |
+|---|---|---|---|---|
+| Tests manuales (Assignment 1) | 93% (misses 81/1223) | 96% (misses 6/159) | 91% (187/206) | 94% (187/200) |
+| EvoSuite (sin repOK()) | 61% (misses 618/1603) | 59% (misses 91/225) | 46% (109/239) | 75% (109/145) |
+| EvoSuite + repOK() como oráculo | 78% (misses 346/1603) | 72% (misses 63/225) | 56% (134/239) | 68% (134/197) |
+| Randoop | 72% (misses 443/1603) | 61% (misses 87/225) | 56% (135/239) | 86% (135/157) |
 
-5- Randoop-record
-  - Instruction coverage: 72%
-  - Branch coverage: 61%
-- Pitest
-  - Line coverage: 67%
-  - Mutation coverage: 56%
-  - Test strength: 86%
 
-## Cómo se eliminó el flakiness en los tests de EvoSuite
+## Comparación EvoSuite vs. Randoop
 
-Los tests generados por EvoSuite para Board eran flaky: dependían de
-Math.random() (a través de MathRandom, la implementación por defecto de
-IRandom) y las aserciones de regresión que EvoSuite genera capturan el
-valor devuelto por el azar en el momento de la generación, no una propiedad
-del programa. Al correr esos tests después, Math.random() devuelve otro
-valor y la aserción falla — en una corrida real, 16 de 70 tests de
-Board_ESTest fallaron por esta razón.
+*Similitudes*
 
-*Por qué Randoop no sufre este problema.* Randoop tiene dos archivos de
-configuración (scripts-configs/randoop-omit-classes.txt y
-randoop-omit-methods.txt) que excluyen por completo la clase MathRandom
-y los constructores Board()/Board(int) de su exploración. Estructuralmente,
-Randoop no puede construir un Board con azar real: el único IRandom que
-le queda disponible es DeterministicRandom (una implementación que
-devuelve una secuencia fija de enteros pasada por parámetro).
+- Ambas generan pruebas unitarias automáticamente. Para hacerlo, analizan las
+  clases y prueban distintas combinaciones de constructores y métodos públicos,
+  sin que el usuario tenga que escribir cada caso manualmente.
+- Ninguna de las dos entiende la intención del programa: ambas producen
+  mayormente *aserciones de regresión* (assertEquals contra el valor que
+  efectivamente devolvió el método en el momento de la generación), no
+  aserciones basadas en la especificación. Esto se nota fuerte en los tests
+  generados para Board y Cell, donde las aserciones dependen de
+  toString() en vez de expresar la propiedad que debería cumplirse.
+- Ambas generan tests frágiles y poco legibles para un humano: nombres
+  autogenerados (test01, test02...), secuencias de llamadas largas y
+  poco relacionadas con un escenario de uso real del juego.
 
-*Por qué EvoSuite sí lo sufre.* EvoSuite no tiene un mecanismo equivalente
-configurado en este proyecto (ni runEvosuite.sh ni la versión 1.0.6 traen
-una opción tipo "prohibí instanciar esta clase"). Su búsqueda genética
-explora libremente los 5 constructores de Board y las dos implementaciones
-de IRandom que encuentra en el classpath (MathRandom y
-DeterministicRandom). Que exista el constructor Board(IRandom) le da a
-EvoSuite la opción de generar tests deterministas, pero no le quita la
-opción de seguir usando MathRandom. Además, EvoSuite normalmente evita
-este problema mockeando Math.random() con su propio runtime
-(org.evosuite.runtime.*) tanto en la generación como en la reproducción de
-los tests, pero ese runtime no es compatible con Java 17+ (ver comentario en
-pom.xml), así que el proyecto genera los tests con
--Dno_runtime_dependency=true, que desactiva justamente ese mecanismo de
-protección.
+*Diferencias*
 
-*Solución aplicada.* Se replicó el enfoque de Randoop pero a nivel de
-classpath en lugar de configuración: antes de invocar a EvoSuite sobre
-Board, se sacó temporalmente MathRandom.class de target/classes
-(dejando DeterministicRandom.class e IRandom.class), se generaron los
-tests, y recién después se restauró MathRandom.class para poder compilar y
-correr la suite con Maven. Sin MathRandom disponible, EvoSuite no tuvo otra
-opción que usar DeterministicRandom para construir todos los Board que
-necesitó (0 apariciones de new MathRandom(...) en el Board_ESTest.java
-resultante, contra 9 antes de aplicar esto).
+- *Estrategia de búsqueda*: EvoSuite usa un algoritmo evolutivo que intenta
+  aumentar la cobertura de ramas, instrucciones y excepciones. Randoop genera
+  secuencias aleatorias de llamadas, elimina las que fallan o no aportan
+  información y conserva las que descubren estados nuevos.
+- *Entradas generadas*: Randoop produjo más casos límite, como referencias
+  nulas, dimensiones inválidas, posiciones fuera de rango, valores fijos para
+  `DeterministicRandom` y objetos incompatibles usados con `equals()`. EvoSuite
+  generó secuencias más dirigidas a cubrir condiciones específicas de `Board`
+  y `Cell`, aunque también usó datos artificiales.
+- *Cobertura*: sin ayuda adicional, EvoSuite obtuvo menos cobertura que Randoop:
+  61% frente a 72% en líneas y 59% frente a 61% en ramas. Esto puede deberse a
+  que `Board` y `Cell` usan `Math.random()`, mientras que Randoop pudo aprovechar
+  `DeterministicRandom` para controlar mejor esos casos.
+- *Uso de `repOK()`*: al usar `repOK()` como oráculo, EvoSuite mejoró de 61% a
+  78% en líneas y de 59% a 72% en ramas. Así superó a Randoop en cobertura de
+  líneas, aunque ambas herramientas obtuvieron un mutation score de 56%.
+- *Test strength*: Randoop obtuvo el mejor resultado, con 86%. Esto indica que
+  sus aserciones detectaron más cambios en el código que sus pruebas realmente
+  ejecutaban.
 
-Este truco tuvo un efecto secundario: EvoSuite, al no encontrar
-MathRandom.class, generó 5 tests que capturaban un NoClassDefFoundError
-al invocar new Board()/new Board(int) como si fuera el comportamiento
-esperado de la clase (test02, test07, test11, test12, test21).
-Ese error es un artefacto del truco de classpath, no un comportamiento real
-del programa — una vez restaurado MathRandom.class esos constructores
-vuelven a funcionar normalmente y esos 5 tests hubiesen fallado. Se
-eliminaron esos 5 métodos del archivo generado, quedando 40 tests en
-Board_ESTest (más los 25 de Cell_ESTest, que no usa IRandom y no
-necesitó este tratamiento).
+*Fortalezas y debilidades*
 
-*Verificación.* Se corrió la suite resultante dos veces seguidas con
-mvn test -Dtest=Board_ESTest,Cell_ESTest: 65/65 tests pasaron en ambas
-corridas, 0 fallos, confirmando que ya no depende de Math.random() sin
-controlar.
+| | Fortalezas | Debilidades |
+|---|---|---|
+| EvoSuite | Búsqueda dirigida por cobertura, mejora mucho si se le da un oráculo explícito (repOK()); bueno para forzar ramas puntuales | Requiere JDK 8 aparte, runtime no compatible con Java 17+ (hubo que generar sin runtime), tests generados son inestables/flaky con métodos que usan Math.random() |
+| Randoop | No necesita JDK aparte, exploración feedback-directed encuentra bugs con entradas inválidas/límite sin configuración extra, buen test strength | Cobertura más pareja pero no maximizada específicamente, tests aún más largos/difíciles de leer, dependencia fuerte de toString() en las aserciones generadas |
 
-*Resultado.* Con la suite ya determinista, se midió jacoco y PIT
-exclusivamente sobre estos 65 tests (excluyendo los tests manuales y los de
-Randoop) y se guardaron los tests generados junto con los reportes en
-reportes/evosuite-noflaky-record/, sin sobrescribir los records anteriores
-(evosuite-record/, evosuite-repok-record/) para mantener el historial de
-comparación.
+## Cómo funciona el fuzzer y qué se implementó en fuzz()
+
+El fuzzer (scripts-configs/fuzzer.py) sigue la estructura propuesta por
+The Fuzzing Book: separa la generación de entradas (Fuzzer) de la
+ejecución del programa bajo prueba (Runner).
+
+- *CLIRunner* lanza el juego como subproceso
+  (java -ea -cp ./target/classes ar.edu.unrc.game2048.MainCLI), le manda
+  la entrada fuzzeada por stdin, y clasifica el resultado:
+  - PASS si el proceso termina con código 0 y sin salida en stderr.
+  - FAIL si el proceso termina con código distinto de 0 o escribe algo en
+    stderr (por ejemplo, una excepción no capturada o un AssertionError
+    de un assert repOK() fallido).
+  - UNRESOLVED si el proceso no termina dentro del timeout (10s), lo que
+    se interpreta como colgado.
+- *RandomFuzzer.fuzz()* genera un input válido: elige una longitud
+  aleatoria entre min_length y max_length (por defecto 10 a 50), y por
+  cada posición elige una tecla al azar de manera uniforme entre a, s,
+  w, d (izquierda, abajo, arriba, derecha). Al final agrega q para
+  salir prolijamente. Cada tecla queda en su propia línea, terminando en
+  \n, tal como requiere el CLI:
+
+  python
+  def fuzz(self) -> str:
+      length = random.randint(self.min_length, self.max_length)
+      moves = [random.choice(KEYS) for _ in range(length)]
+      moves.append('q')
+      return '\n'.join(moves) + '\n'
+  
+
+  Es un fuzzer puramente aleatorio, sin mutación de casos previos ni
+  gramática más elaborada: cada movimiento es independiente y equiprobable,
+  lo que es suficiente para este programa porque el alfabeto de entradas
+  válidas es muy chico (4 movimientos + salir) y el estado del juego
+  (Board) es lo que realmente varía en cada corrida según el azar interno
+  del juego.
+- main() corre 20 trials, imprime el resultado de cada uno y un resumen
+  final con la cantidad de PASS/FAIL/UNRESOLVED.
+
+## Bugs encontrados
+
+Se corrió el fuzzer con -ea habilitado (assertions activas) y con
+assert repOK() integrado en Board, Cell y MainCLI (ver
+src/main/java/ar/edu/unrc/game2048/MainCLI.java:37-80, que llama a
+repOK() después de cada movimiento).
+
+En 20 corridas de secuencias aleatorias de 10 a 50 movimientos no se
+encontró ningún crash ni ninguna violación de repOK():
+
+
+Summary:
+  PASS        : 20/20
+  FAIL        : 0/20
+  UNRESOLVED  : 0/20
+
+
+No se identificaron bugs reproducibles con este fuzzer en su configuración
+actual. Esto es consistente con que repOK() ya estaba bien integrado desde
+el Assignment 2 y con que el espacio de movimientos válidos es reducido:
+el fuzzer nunca envía teclas inválidas (solo a/s/w/d/q), así que no ejercita
+las rutas de manejo de entrada inválida del CLI. Una extensión natural sería
+agregar ocasionalmente teclas fuera del alfabeto válido o inputs mal
+formados (líneas vacías, mayúsculas, EOF anticipado) para estresar también
+el parsing de comandos del MainCLI, no solo la lógica del tablero.
+
+## Reflexiones: ¿qué técnica fue más efectiva para este programa?
+
+- *Para cobertura de código*, los tests manuales del Assignment 1 siguen
+  siendo, por lejos, los más efectivos (93% líneas / 96% ramas / 91%
+  mutation score), porque fueron escritos entendiendo la especificación del
+  juego y apuntando deliberadamente a los casos límite del dominio (bordes
+  del tablero, fusiones de fichas, condiciones de fin de juego).
+- *Entre las técnicas automáticas*, Randoop resultó más efectivo "out of
+  the box" que EvoSuite para este proyecto, tanto en cobertura de líneas/ramas
+  como en test strength, principalmente porque no depende de un runtime
+  incompatible con la versión de Java del proyecto y porque su exploración
+  feedback-directed encontró casos límite de validación (constructores con
+  dimensiones inválidas, posiciones fuera de rango) sin que se le indicara
+  nada especial. Sin embargo, EvoSuite mostró el mayor salto de calidad al
+  agregarle un oráculo explícito (repOK()), lo que sugiere que su
+  búsqueda dirigida por fitness se beneficia mucho más que Randoop de tener
+  una señal adicional de "estado inválido" para guiar la generación.
+- *Como técnica de *bug finding**, el fuzzer es cualitativamente distinto
+  a EvoSuite/Randoop: en vez de maximizar cobertura de código a nivel de
+  unidad, ejercita el programa completo a través de su interfaz real (stdin
+  del CLI), con secuencias largas de interacciones que sí pueden disparar
+  bugs de integración (por ejemplo, un repOK() roto tras muchos
+  movimientos encadenados) que un test unitario aislado difícilmente
+  reproduciría. En este proyecto no encontró fallas porque Board/Cell ya
+  estaban bien defendidos por repOK() desde el Assignment 2, pero es la
+  única de las tres técnicas capaz de detectar errores que solo aparecen
+  por la combinación de muchos movimientos en secuencia, algo que ni
+  EvoSuite ni Randoop prueban (ellos llaman a los métodos de forma aislada,
+  no a través de una sesión completa de juego).
+- *En conjunto*, las tres técnicas son complementarias: EvoSuite/Randoop
+  son mejores para maximizar cobertura de código rápido y sin esfuerzo
+  manual, mientras que el fuzzer es mejor para validar invariantes de
+  extremo a extremo sobre secuencias largas de uso real del programa. Para
+  este programa en particular, dado lo simple del dominio y lo bien cubierto
+  que ya estaba por los tests manuales y repOK(), ninguna de las técnicas
+  automáticas encontró bugs nuevos, pero Randoop fue la más "efectiva" en
+  términos de costo/beneficio (cobertura razonable sin configuración extra).
 
 
 
