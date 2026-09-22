@@ -27,8 +27,8 @@ Ademas son fragiles debido a muchas dependencias de toString() para verificar el
 #### 1.3 Measure Coverage
 1-BaseLine
 - Jacoco
-  - Missed Instructions: 82%
-  - Missed Branches: 76%
+  - Instruction coverage: 82%
+  - Branch coverage: 77%
 - Pitest
   - Line coverage: 79%
   - Mutation coverage: 67%
@@ -36,37 +36,37 @@ Ademas son fragiles debido a muchas dependencias de toString() para verificar el
 
 2-Test manuales
 - Jacoco
-  - Missed Instructions: 
-  - Missed Branches: 
+  - Instruction coverage: 94%
+  - Branch coverage: 96%
 - Pitest
-  - Line coverage: 
-  - Mutation coverage: 
-  - Test strength: 
+  - Line coverage: 97%
+  - Mutation coverage: 91%
+  - Test strength: 94%
 
 3-Evosuite-record
 - Jacoco
-  - Missed Instructions: 
-  - Missed Branches: 
+  - Instruction coverage: 61%
+  - Branch coverage: 60%
 - Pitest
-  - Line coverage: 
-  - Mutation coverage: 
-  - Test strength: 
+  - Line coverage: 57%
+  - Mutation coverage: 46%
+  - Test strength: 75%
 
 4- Evosuite-repok-record
-  - Missed Instructions: 
-  - Missed Branches: 
+  - Instruction coverage: 78%
+  - Branch coverage: 72%
 - Pitest
-  - Line coverage: 
-  - Mutation coverage: 
-  - Test strength: 
+  - Line coverage: 76%
+  - Mutation coverage: 56%
+  - Test strength: 68%
 
 5- Randoop-record
-  - Missed Instructions: 
-  - Missed Branches: 
+  - Instruction coverage: 72%
+  - Branch coverage: 61%
 - Pitest
-  - Line coverage: 
-  - Mutation coverage: 
-  - Test strength: 
+  - Line coverage: 67%
+  - Mutation coverage: 56%
+  - Test strength: 86%
 
 
 
