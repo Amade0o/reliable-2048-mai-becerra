@@ -42,9 +42,9 @@ Ademas son fragiles debido a muchas dependencias de toString() para verificar el
 
 *Similitudes*
 
-- Ambas generan pruebas unitarias automáticamente. Para hacerlo, analizan las
-  clases y prueban distintas combinaciones de constructores y métodos públicos,
-  sin que el usuario tenga que escribir cada caso manualmente.
+- Las dos herramientas crean pruebas de forma automática. Para ello, combinan
+  diferentes constructores y métodos públicos de las clases, sin necesidad de
+  escribir las pruebas una por una.
 - Ninguna de las dos entiende la intención del programa: ambas producen
   mayormente *aserciones de regresión* (assertEquals contra el valor que
   efectivamente devolvió el método en el momento de la generación), no
@@ -151,12 +151,16 @@ el parsing de comandos del MainCLI, no solo la lógica del tablero.
 
 ## Reflexiones: ¿qué técnica fue más efectiva para este programa?
 
-- *Para cobertura de código*, los tests manuales del Assignment 1 siguen
+### Para cobertura de código
+
+Los tests manuales del Assignment 1 siguen
   siendo, por lejos, los más efectivos (93% líneas / 96% ramas / 91%
   mutation score), porque fueron escritos entendiendo la especificación del
   juego y apuntando deliberadamente a los casos límite del dominio (bordes
   del tablero, fusiones de fichas, condiciones de fin de juego).
-- *Entre las técnicas automáticas*, la comparación depende de la métrica.
+### Entre las técnicas automáticas
+
+La comparación depende de la métrica.
   En cobertura pura, EvoSuite con repOK() como oráculo superó a Randoop
   (78% líneas / 72% ramas frente a 72% líneas / 61% ramas), y ambas
   quedaron empatadas en mutation score (56%). Randoop, en cambio, ganó
@@ -168,7 +172,9 @@ el parsing de comandos del MainCLI, no solo la lógica del tablero.
   que Randoop de tener una señal adicional de "estado inválido" para
   guiar la generación, mientras que Randoop es más efectivo cuando no se
   cuenta con esa señal.
-- *Como técnica de *bug finding**, el fuzzer es cualitativamente distinto
+### Como técnica de *bug finding*
+
+El fuzzer es cualitativamente distinto
   a EvoSuite/Randoop: en vez de maximizar cobertura de código a nivel de
   unidad, ejercita el programa completo a través de su interfaz real (stdin
   del CLI), con secuencias largas de interacciones que sí pueden disparar
@@ -180,7 +186,9 @@ el parsing de comandos del MainCLI, no solo la lógica del tablero.
   por la combinación de muchos movimientos en secuencia, algo que ni
   EvoSuite ni Randoop prueban (ellos llaman a los métodos de forma aislada,
   no a través de una sesión completa de juego).
-- *En conjunto*, las tres técnicas son complementarias: EvoSuite/Randoop
+### En conjunto
+
+Las tres técnicas son complementarias: EvoSuite/Randoop
   son mejores para maximizar cobertura de código rápido y sin esfuerzo
   manual, mientras que el fuzzer es mejor para validar invariantes de
   extremo a extremo sobre secuencias largas de uso real del programa. Para
