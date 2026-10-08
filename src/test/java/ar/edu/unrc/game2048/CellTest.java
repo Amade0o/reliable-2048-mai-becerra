@@ -1,12 +1,20 @@
 package ar.edu.unrc.game2048;
 
+<<<<<<< HEAD
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
+=======
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class CellTest {
+>>>>>>> upstream/main
 
 public class CellTest {
     
     @Test
+<<<<<<< HEAD
     public void CellConstructorValid(){
         //arrange
         int value = 2;
@@ -276,4 +284,20 @@ public class CellTest {
         //Assert
         assertEquals(".", cellToString);
     }
+=======
+    public void testEmptyCell() {
+        Cell cell = new Cell(0);
+        assertTrue(cell.isEmpty());
+        assertEquals(0, cell.getValue());
+        assertEquals(Cell.EMPTY, cell);
+    }
+
+    @Test
+    public void testValidCell() {
+        Cell cell2 = new Cell(2);
+        assertFalse(cell2.isEmpty());
+        assertEquals(2, cell2.getValue());
+    }
+
+>>>>>>> upstream/main
 }
