@@ -1,10 +1,8 @@
 package ar.edu.unrc.game2048;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.junit.jupiter.api.Test;
-import org.junit.Test;
 import static org.junit.Assert.*;
+
+import org.junit.Test;
 
 public class CellTest {
     
@@ -49,7 +47,7 @@ public class CellTest {
         Cell cell = new Cell(value);
 
         //Act
-        Boolean isEmpty = cell.isEmpty();
+        boolean isEmpty = cell.isEmpty();
 
         //Assert
         assertTrue(isEmpty);
@@ -209,7 +207,7 @@ public class CellTest {
 
     @Test
     public void twoObjectsAreNotEqualCells(){
-        //Arrage
+        //Arrange
         int value1 = 2;
         Cell cell1 = new Cell(value1);
         Board object = new Board();
@@ -278,6 +276,8 @@ public class CellTest {
         //Assert
         assertEquals(".", cellToString);
     }
+
+    @Test
     public void testEmptyCell() {
         Cell cell = new Cell(0);
         assertTrue(cell.isEmpty());
