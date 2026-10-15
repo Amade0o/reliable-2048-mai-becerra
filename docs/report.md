@@ -230,3 +230,29 @@ Estos tests solo fueron ejecutados sobre los tests manuales
 | `this.size one of { 2, 4, 5 }` | `OBJECT` | Demasiado fuerte |
 | `randomGeneration.getClass() == MathRandom` | `OBJECT` | Falsa |
 | `DEFAULT_SIZE >= this.score`, `WINNING_VALUE > this.size` | `OBJECT` | Falsa |
+
+
+### Comparación: repOK() vs. invariantes inferidos por Daikon
+
+#### Cell
+
+| Invariantes de repOK() | Invariantes de Daikon |
+|---|---|
+| `value >= 0` | `this.value >= 0` en `OBJECT` |
+| `value == 0` ó `value` es potencia de dos | — (no expresable; infirió `this.value one of { 0, 2, 4 }`, que es falsa) |
+| — | `this.value == orig(value)` en `Cell(int):::EXIT` |
+| — | `(this.value == 0) <==> (return == true)` en `isEmpty():::EXIT` |
+| — | `this.value == other.value` en `mergeWith:::ENTER` |
+| — | `return.value == this.value * 2` en `mergeWith:::EXIT` |
+
+#### Board
+
+| Invariantes de repOK() | Invariantes de Daikon |
+|---|---|
+| `size > 0` | `this.size one of { 2, 4, 5 }` en `OBJECT` (demasiado fuerte) |
+| `score >= 0` | — (infirió `DEFAULT_SIZE >= this.score`, no la propiedad directa) |
+| `grid != null` y `grid.length == size` | `this.size == size(this.grid[])` en `OBJECT` |
+| Cada fila y celda no nula | `this.grid != null`, elementos `!= null` en `OBJECT` |
+| Cada celda satisface `cell.repOK()` (potencia de dos) | — (no expresable; Daikon no tiene plantillas recursivas) |
+| — | `row >= 0`, `col >= 0`, `row <= size-1`, `col <= size-1` en `getCell:::ENTER` |
+| — | `return != null` en `getCell:::EXIT` |
