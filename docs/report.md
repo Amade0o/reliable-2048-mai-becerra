@@ -311,3 +311,28 @@ Daikon quedó en un lugar interesante, como complemento. Sacar contratos de mét
 Su límite es que todo lo que dice depende de la traza. Con los tests manuales solos infirió cosas que son verdad en esas corridas y falsas en el juego, como `score one of { 0, 4 }` o `this.value == 2` en `mergeWith`. Ampliar la traza ayudó, pero no resolvió todo: `WINNING_VALUE > this.score` sigue apareciendo, y es falso porque el puntaje puede pasar de 2048. Hay que leer la salida de Daikon con ojo crítico, no usarla como especificación.
 
 Un último dato práctico: los tests generados automáticamente fueron un obstáculo para trazar. Algunos de Randoop y de EvoSuite construyen tableros de entre 97 x 97 y 2048 x 2048 celdas, y como Chicory vuelca el estado completo en cada llamada, la traza llegaba a cientos de megas y los tests se colgaban. Tuvimos que excluir cuatro tests para poder trabajar. Es un recordatorio de que un oráculo "automático" no siempre se puede usar tal cual sale de la herramienta.
+
+### Comparación: repOK() vs. invariantes inferidos por Daikon
+
+#### Cell
+
+| Invariantes de repOK() | Invariantes de Daikon |
+|---|---|
+| `value >= 0` | `this.value >= 0` en `OBJECT` |
+| `value == 0` ó `value` es potencia de dos | — (no expresable; infirió `this.value one of { 0, 2, 4 }`, que es falsa) |
+| — | `this.value == orig(value)` en `Cell(int):::EXIT` |
+| — | `(this.value == 0) <==> (return == true)` en `isEmpty():::EXIT` |
+| — | `this.value == other.value` en `mergeWith:::ENTER` |
+| — | `return.value == this.value * 2` en `mergeWith:::EXIT` |
+
+#### Board
+
+| Invariantes de repOK() | Invariantes de Daikon |
+|---|---|
+| `size > 0` | `this.size one of { 2, 4, 5 }` en `OBJECT` (demasiado fuerte) |
+| `score >= 0` | — (infirió `DEFAULT_SIZE >= this.score`, no la propiedad directa) |
+| `grid != null` y `grid.length == size` | `this.size == size(this.grid[])` en `OBJECT` |
+| Cada fila y celda no nula | `this.grid != null`, elementos `!= null` en `OBJECT` |
+| Cada celda satisface `cell.repOK()` (potencia de dos) | — (no expresable; Daikon no tiene plantillas recursivas) |
+| — | `row >= 0`, `col >= 0`, `row <= size-1`, `col <= size-1` en `getCell:::ENTER` |
+| — | `return != null` en `getCell:::EXIT` |
