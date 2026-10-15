@@ -196,3 +196,37 @@ Las tres técnicas son complementarias: EvoSuite/Randoop
   que ya estaba por los tests manuales y repOK(), ninguna de las técnicas
   automáticas encontró bugs nuevos, pero Randoop fue la más "efectiva" en
   términos de costo/beneficio (cobertura razonable sin configuración extra).
+
+
+## REPORT PARA EL ASSIGNMENT 4. 
+
+### Assignment 4 — Invariantes definidos por daikon
+Estos tests solo fueron ejecutados sobre los tests manuales
+
+#### Cell
+
+| Invariante | Dónde | Clasificación |
+|---|---|---|
+| `this.value >= 0` | `OBJECT` | Correcta y útil |
+| `this.value == orig(value)` | `Cell(int):::EXIT` | Correcta y útil |
+| `(this.value == 0) <==> (return == true)` | `isEmpty():::EXIT` | Correcta y útil |
+| `this.value == other.value` | `mergeWith:::ENTER` | Correcta y útil |
+| `return >= 0` / `return == this.value` | `getValue():::EXIT` | Correcta pero trivial |
+| `this.value == 2` | `mergeWith:::ENTER` y `canMergeWith` con `return == true` | Demasiado fuerte |
+| `return.value == 4` | `mergeWith:::EXIT` | Falsa |
+| `this.value one of { 0, 2, 4 }` | `equals`, `toString` | Falsa |
+
+#### Board
+
+| Invariante | Dónde | Clasificación |
+|---|---|---|
+| `this.size == size(this.grid[])` | `OBJECT` | Correcta y útil |
+| `this.grid != null`, `this.grid[]` elements `!= null` | `OBJECT` | Correcta y útil |
+| `row >= 0`, `col >= 0`, `row <= size-1`, `col <= size-1` | `getCell:::ENTER` | Correcta y útil |
+| `return != null` | `getCell:::EXIT` | Correcta y útil |
+| `this.score == return` | `getScore():::EXIT` | Correcta pero trivial |
+| `this.score one of { 0, 4 }` | `OBJECT` | Falsa |
+| `this.score % this.size == 0` | `OBJECT` | Falsa |
+| `this.size one of { 2, 4, 5 }` | `OBJECT` | Demasiado fuerte |
+| `randomGeneration.getClass() == MathRandom` | `OBJECT` | Falsa |
+| `DEFAULT_SIZE >= this.score`, `WINNING_VALUE > this.size` | `OBJECT` | Falsa |
