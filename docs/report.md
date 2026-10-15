@@ -256,3 +256,17 @@ Estos tests solo fueron ejecutados sobre los tests manuales
 | Cada celda satisface `cell.repOK()` (potencia de dos) | — (no expresable; Daikon no tiene plantillas recursivas) |
 | — | `row >= 0`, `col >= 0`, `row <= size-1`, `col <= size-1` en `getCell:::ENTER` |
 | — | `return != null` en `getCell:::EXIT` |
+
+### Phase 4.2 — Comparación de todas las fuentes de oráculos
+
+| Fuente | Cómo se producen los oráculos | Fortalezas | Debilidades |
+|---|---|---|---|
+| Aserciones manuales | Se escriben a mano según la especificación. | Precisas y significativas. | Requieren tiempo y pueden omitir casos. |
+| `repOK()` | Se escribe a mano y se comprueba durante la ejecución. | Reutilizable y se verifica continuamente. | Tiene las mismas limitaciones que las aserciones manuales. |
+| Aserciones de regresión de Randoop | Se ejecutó `scripts-configs/runRandoop.sh`, usando Maven, las clases compiladas y `randoop-all-4.3.4.jar`. Randoop generó secuencias de llamadas y guardó los valores observados como aserciones. **No se usó `repOK()` como oráculo de Randoop.** | Automáticas y exploran muchos casos. | Frágiles y no necesariamente significativas. |
+| Aserciones de EvoSuite | Se ejecutó `scripts-configs/runEvosuite.sh` con EvoSuite 1.0.6 y un JDK 8. Generó y mutó tests para maximizar la cobertura. Se probaron dos variantes: **sin `repOK()`** y **con `repOK()` como oráculo adicional**. | Automáticas y con buena cobertura; mejoran al contar con `repOK()`. | Suelen ser de regresión y dependen de la calidad de `repOK()`. |
+| Invariantes de Daikon | Se instrumentó el programa con Chicory y se generaron trazas `.dtrace`; luego `daikon.jar` infirió invariantes a partir de varias ejecuciones. **Daikon no usó `repOK()` para generar sus invariantes**: sus resultados se compararon con `repOK()` después. | Generalizan el comportamiento observado. | Dependen de la calidad de la traza y pueden ser falsas. |
+
+#### ¿Qué técnica produjo los oráculos más útiles para este programa?
+
+Entre las técnicas estudiadas, **Daikon produjo los oráculos más útiles**, porque infirió invariantes generales y contratos a partir de las trazas de ejecución, en lugar de limitarse a repetir valores observados. Sus resultados deben revisarse, ya que algunos pueden ser demasiado fuertes o falsos si la traza es poco variada. **EvoSuite con `repOK()`** fue el complemento más efectivo para generar tests: la búsqueda evolutiva alcanzó mayor cobertura cuando contó con un invariante semántico. Randoop también fue útil para explorar automáticamente casos límite, aunque sus aserciones de regresión son más frágiles. Los tests manuales y `repOK()` se tomaron como referencia para validar la calidad de estos oráculos.
