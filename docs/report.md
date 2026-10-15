@@ -231,6 +231,86 @@ Estos tests solo fueron ejecutados sobre los tests manuales
 | `randomGeneration.getClass() == MathRandom` | `OBJECT` | Falsa |
 | `DEFAULT_SIZE >= this.score`, `WINNING_VALUE > this.size` | `OBJECT` | Falsa |
 
+### Ampliación de la traza (punto 3.3)
+
+Primero se infirió con `BoardTest` y `CellTest` solamente (`daikon-output.txt`). Después se amplió la traza con los tests de EvoSuite (`Board_ESTest`, `Cell_ESTest`) y los de Randoop (`RegressionTest0`), sin `MainCLITest` (`daikon-output-completo.txt`). Se excluyeron `Board_ESTest#test25` y `RegressionTest0#test45`, `test49` y `test54`, porque crean tableros enormes (de 633 x 633 hasta 2048 x 2048) y hacen inviable la traza.
+
+| Invariante | Traza chica | Traza completa | Qué pasó |
+|---|---|---|---|
+| `this.score one of { 0, 4 }` (`Board:::OBJECT`) | Aparece, falsa | Desaparece | Se corrigió al ver más puntajes |
+| `this.size one of { 2, 4, 5 }` (`Board:::OBJECT`) | Aparece, demasiado fuerte | Desaparece | Se corrigió al ver más tamaños |
+| `this.score >= 0` (`Board:::OBJECT`) | No aparece | Aparece, correcta y útil | Antes la tapaba el `one of`; es parte de `repOK()` |
+| `this.size >= 1` (`Board:::OBJECT`) | No aparece | Aparece, correcta y útil | Antes la tapaba el `one of`; es parte de `repOK()` |
+| `this.value == 2` (`mergeWith`, `canMergeWith`) | Aparece, falsa | Desaparece | Ahora se mergean 1, 2 y 4 |
+| `return.value == 4` (`mergeWith:::EXIT`) | Aparece, falsa | Reemplazada por `this.value < return.value` y `return.value % this.value == 0` | Más cerca de la regla real (`2 * value`) |
+| `randomGeneration.getClass() == MathRandom` (`Board:::OBJECT`) | Aparece, falsa | Desaparece | Aparecen los `DeterministicRandom` |
+| `this.score % this.size == 0` (`Board:::OBJECT`) | Aparece, falsa | Sigue, falsa | Coincidencia numérica |
+| `WINNING_VALUE > this.score` (`Board:::OBJECT`) | Aparece, falsa | Sigue, falsa | El puntaje puede superar 2048 |
+| `this.value is a power of 2` (`Cell:::OBJECT`) | No aparece | No aparece | Solo sale en `repOK()` con `value >= 2` |
+| `this.value one of { 1, 2, 4 }` (`mergeWith:::ENTER`) | No aparece | Aparece | Muestra que hay tests con `Cell(1)` |
+
+Ampliar la traza sacó varias invariantes falsas, pero no todas, y dejó aparecer invariantes correctas que antes estaban tapadas. Lo que no se resolvió con más tests es lo que depende de la forma de la propiedad (por ejemplo, la disyunción `value == 0 || value es potencia de 2`) y no de los datos.
+
+
+## Fase 4: Comparación
+
+### 4.1 Daikon contra `repOK()`
+
+Lo primero que miramos fue qué parte de nuestros `repOK()` volvió a aparecer sola en la salida de Daikon. Con la traza completa, casi todo lo "fácil" está:
+
+| `repOK()` | Lo que infirió Daikon |
+|---|---|
+| `Cell`: `value >= 0` | `this.value >= 0` |
+| `Board`: `size > 0` | `this.size >= 1` |
+| `Board`: `score >= 0` | `this.score >= 0` |
+| `Board`: `grid != null` | `this.grid != null` |
+| `Board`: `grid.length == size` | `this.size == size(this.grid[])` |
+| `Board`: ninguna celda es `null` | `this.grid[] elements != null` |
+
+Un detalle que nos llamó la atención: con la traza chica (solo `BoardTest` y `CellTest`) `size > 0` y `score >= 0` no aparecían. Daikon había visto `score` valiendo siempre 0 o 4 y `size` valiendo 2, 4 o 5, y se quedó con esos `one of { ... }`, que son más fuertes y esconden a los otros dos. Recién al sumar los tests de EvoSuite y Randoop, con más puntajes y más tamaños, los `one of` se cayeron y aparecieron las condiciones generales.
+
+Lo que Daikon **no** encontró es justamente lo más interesante de nuestro `repOK()`:
+
+- **Que el valor de una celda sea 0 o una potencia de 2.** Es una disyunción, y los templates de Daikon son propiedades simples, no combinaciones con "o". Lo más cerca que llegó fue `this.value is a power of 2` en el punto de `repOK()` donde ya sabe que `value >= 2`. En `Cell:::OBJECT` solo quedó `value >= 0`.
+- **Que cada fila del tablero tenga largo `size`.** Daikon ve el largo de la dimensión externa de `grid[][]`, pero no el de cada fila.
+- **Que cada celda cumpla su propio `repOK()`.** Es una propiedad sobre todos los elementos de una estructura anidada, y eso queda fuera de lo que Daikon sabe expresar.
+
+Hay dos cosas que Daikon infirió y que **no están** en nuestros `repOK()`:
+
+1. `this.randomGeneration != null` en `Board:::OBJECT`. Es verdadera de verdad: el constructor `Board(int, IRandom)` tira `IllegalArgumentException` si el generador es `null`. Pero `Board.repOK()` no lo chequea. Es un invariante correcto y útil que nos faltaba, y lo agregamos (ver más abajo).
+2. `this.value one of { 1, 2, 4 }` en `mergeWith:::ENTER`. No es un invariante para agregar, pero muestra algo: algún test construye `Cell(1)`, y el constructor lo acepta porque 1 es potencia de 2. En el juego los valores son 0, 2, 4, 8..., así que el 1 es un valor que el programa deja pasar pero que en la práctica no debería existir.
+
+**Cambios en `repOK()`.** A partir de lo que mostró Daikon actualizamos `Board.repOK()`: ahora también devuelve `false` si `randomGeneration == null`. Es exactamente el invariante `this.randomGeneration != null` que Daikon infirió y que el constructor ya exigía, pero que el `repOK()` no verificaba. Con esto, el `repOK()` queda alineado con lo que el constructor garantiza, y las llamadas a `assert repOK()` ahora detectan un `Board` con generador nulo en cualquier punto, no solo al construirlo.
+
+```java
+if (randomGeneration == null) {
+    return false;
+}
+```
+
+Después del cambio corrimos toda la suite (`mvn clean test`, 202 tests entre manuales, EvoSuite y Randoop) y siguen pasando todos.
+
+El otro hallazgo, el de `Cell(1)`, **no** lo cambiamos. El `repOK()` de `Cell` pide "cero o potencia de 2", y 1 cumple eso, así que exigir `value >= 2` sería cambiar la especificación del juego y no solo corregir un chequeo olvidado. Queda como una decisión de diseño pendiente.
+
+### 4.2 Daikon contra los otros oráculos
+
+Después de cuatro assignments tenemos cinco fuentes de oráculos, y para este programa en particular se comportaron distinto:
+
+| Fuente | Cómo se produce | Qué nos aportó acá |
+|---|---|---|
+| Aserciones manuales | A mano | Lo más preciso y con sentido de dominio (`BoardTest`, `CellTest`) |
+| `repOK()` | A mano | Reutilizable y siempre chequeado. Es lo único que expresa la potencia de 2 y la forma de la grilla |
+| Randoop | Observa una corrida | Aserciones de regresión que dicen "esto fue lo que pasó", sin explicar por qué |
+| EvoSuite | Evoluciona para cubrir código | Mucha cobertura, pero también estilo regresión |
+| Daikon | Infiere de muchas corridas | Pre y postcondiciones de método casi gratis, y un chequeo que a nosotros se nos había pasado |
+
+Para este programa, lo que más nos sirvió como oráculo fue `repOK()` junto con las aserciones manuales. Son los que dicen cosas con significado, y los que se animan a afirmar propiedades que ninguna ejecución observada alcanza a mostrar.
+
+Daikon quedó en un lugar interesante, como complemento. Sacar contratos de método a partir de los tests existentes fue barato y varios salieron bien (`isEmpty` es verdadero si y solo si `value == 0`, `getCell` exige `0 <= row, col < size`, `mergeWith` exige `this.value == other.value`). Y además sirvió para **cuestionar** nuestro `repOK()`: encontró un chequeo que faltaba y puso en evidencia el caso `Cell(1)`.
+
+Su límite es que todo lo que dice depende de la traza. Con los tests manuales solos infirió cosas que son verdad en esas corridas y falsas en el juego, como `score one of { 0, 4 }` o `this.value == 2` en `mergeWith`. Ampliar la traza ayudó, pero no resolvió todo: `WINNING_VALUE > this.score` sigue apareciendo, y es falso porque el puntaje puede pasar de 2048. Hay que leer la salida de Daikon con ojo crítico, no usarla como especificación.
+
+Un último dato práctico: los tests generados automáticamente fueron un obstáculo para trazar. Algunos de Randoop y de EvoSuite construyen tableros de entre 97 x 97 y 2048 x 2048 celdas, y como Chicory vuelca el estado completo en cada llamada, la traza llegaba a cientos de megas y los tests se colgaban. Tuvimos que excluir cuatro tests para poder trabajar. Es un recordatorio de que un oráculo "automático" no siempre se puede usar tal cual sale de la herramienta.
 
 ### Comparación: repOK() vs. invariantes inferidos por Daikon
 

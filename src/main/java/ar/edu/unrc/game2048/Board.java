@@ -151,11 +151,14 @@ public class Board {
      * Checks whether this board satisfies its representation invariants.
      *
      * @return true if the board has a positive square shape, a non-negative
-     *         score, and only valid non-null cells
+     *         score, a non-null random generator, and only valid non-null cells
      */
     @CheckRep
     public boolean repOK() {
         if (size <= 0 || score < 0 || grid == null || grid.length != size) {
+            return false;
+        }
+        if (randomGeneration == null) {
             return false;
         }
 
