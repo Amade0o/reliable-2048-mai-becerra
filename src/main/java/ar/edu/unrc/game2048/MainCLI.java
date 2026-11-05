@@ -45,6 +45,8 @@ public class MainCLI {
                 this.board = new Board(tamañoDeseado,tableroString);
 
                 System.out.println();
+
+                break;
             }else if(input.equals("N")){
                 break;
             }else{
