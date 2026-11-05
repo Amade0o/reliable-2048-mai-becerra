@@ -36,7 +36,7 @@ public class MainCLI {
 
             if(input.equals("Y")){
                 System.out.print("Ingrese el tamaño deseado del tablero: ");
-                int tamañoDeseado = scanner.nextInt();
+                int tamañoDeseado = Integer.parseInt(scanner.nextLine().trim());
                 System.out.println();
 
                 System.out.print("Ingrese el tablero: (caracteres separados por ',' y filas separadas por ';'");
