@@ -39,7 +39,7 @@ public class MainCLI {
                 int tamañoDeseado = Integer.parseInt(scanner.nextLine().trim());
                 System.out.println();
 
-                System.out.print("Ingrese el tablero: (caracteres separados por ',' y filas separadas por ';'");
+                System.out.print("Ingrese el tablero: (caracteres separados por ',' y filas separadas por ';': ");
                 String tableroString = scanner.nextLine();
 
                 this.board = new Board(tamañoDeseado,tableroString);
