@@ -34,7 +34,7 @@ public final class Cell {
      */
     public Cell(int value) {
         if (value < 0 || (value != 0 && (value & (value - 1)) != 0)) {
-            throw new IllegalArgumentException("Cell value cannot be negative: " + value);
+            throw new IllegalArgumentException("Cell value cannot be negative or not a power of two: " + value);
         }
         this.value = value;
         assert repOK();
