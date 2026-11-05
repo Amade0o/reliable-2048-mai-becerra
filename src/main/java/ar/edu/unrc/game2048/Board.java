@@ -100,6 +100,33 @@ public class Board {
     }
 
     /**
+     * Creates a new board of the specified size with the specified initial setup.
+     *
+     * @param size the board size (must be > 0)
+     * @param setup the initial setup of the board (a string representation)
+     * @throws IllegalArgumentException if size <= 0
+     */
+    public Board(int size, String setup){
+        if (size <= 0) {
+            throw new IllegalArgumentException("Board size must be positive: " + size);
+        }
+        this.size = size;
+        this.grid = new Cell[size][size];
+        this.randomGeneration = new MathRandom();
+        this.score = 0;
+        initializeEmpty();
+        String[] rows = setup.split(";");
+        for (int r = 0; r < size; r++) {
+            String[] values = rows[r].split(",");
+            for (int c = 0; c < size; c++) {
+                int value = Integer.parseInt(values[c]);
+                grid[r][c] = value == 0 ? Cell.EMPTY : new Cell(value);
+            }
+        }
+        assert repOK();
+    }
+
+    /**
      * Copy constructor - creates a deep copy of another board.
      *
      * @param other the board to copy
