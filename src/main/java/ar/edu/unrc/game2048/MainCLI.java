@@ -26,6 +26,33 @@ public class MainCLI {
      * Main game loop.
      */
     public void play() {
+        System.out.println("=== 2048 Options ===");
+        System.out.println("Would you like to use a manually created board?: Y(yes) N(no)");
+        System.out.println();
+
+        while(true) {
+            System.out.print("Selected option: ");
+            String input = scanner.nextLine().trim().toUpperCase();
+
+            if(input.equals("Y")){
+                System.out.print("Ingrese el tamaño deseado del tablero: ");
+                String tamañoDeseado = scanner.nextLine();
+                System.out.println();
+
+                System.out.print("Ingrese el tablero: (caracteres separados por ',' y filas separadas por ';'");
+                String tableroString = scanner.nextLine();
+
+                this.board = new Board(tamañoDeseado,tableroString);
+
+                System.out.println();
+            }else if(input.equals("N")){
+                break;
+            }else{
+                System.out.println("Input incorrecto");
+            }
+        }
+
+
         System.out.println("=== 2048 Game ===");
         System.out.println("Controls: W(up), S(down), A(left), D(right), Q(quit)");
         System.out.println();
