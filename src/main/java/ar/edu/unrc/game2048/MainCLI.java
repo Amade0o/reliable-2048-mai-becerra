@@ -9,7 +9,7 @@ import java.util.Scanner;
  * It demonstrates how to use the Board class and its methods.
  */
 public class MainCLI {
-    private final Board board;
+    private Board board;
     private final Scanner scanner;
     
     public MainCLI() {
@@ -36,7 +36,7 @@ public class MainCLI {
 
             if(input.equals("Y")){
                 System.out.print("Ingrese el tamaño deseado del tablero: ");
-                String tamañoDeseado = scanner.nextLine();
+                int tamañoDeseado = scanner.nextInt();
                 System.out.println();
 
                 System.out.print("Ingrese el tablero: (caracteres separados por ',' y filas separadas por ';'");
