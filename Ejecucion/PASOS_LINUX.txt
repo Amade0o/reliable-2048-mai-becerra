@@ -1,0 +1,139 @@
+=========================================================
+  DAIKON + CHICORY — PASOS PARA LINUX
+  Proyecto: reliable-2048
+  Todos los comandos se corren desde la RAÍZ del proyecto
+=========================================================
+
+DIFERENCIAS RESPECTO A WINDOWS
+───────────────────────────────
+- El separador del classpath es ":" (no ";").
+- La continuación de línea es "\" (no el acento grave de PowerShell).
+- El glob "*.dtrace.gz" lo expande bash directamente (no hace falta Get-ChildItem).
+- En Linux, Java 21 (ya instalado) funciona bien con Chicory.
+  No es necesario instalar un JDK 17 aparte, porque el problema que
+  tenía Windows era específico de Java 25 (buscaba Instrument24 que
+  no existe). Java 21 no tiene ese problema.
+
+─────────────────────────────────────────────────────────
+PASO 1 — Compilar main y tests
+─────────────────────────────────────────────────────────
+
+    mvn clean test-compile
+
+─────────────────────────────────────────────────────────
+PASO 2 — Guardar el classpath de dependencias en cp.txt
+─────────────────────────────────────────────────────────
+
+    mvn dependency:build-classpath -DincludeScope=test -Dmdep.outputFile=cp.txt -q
+
+Verificá que cp.txt no esté vacío:
+
+    cat cp.txt | head -c 200
+
+─────────────────────────────────────────────────────────
+PASO 3 — Compilar el lanzador RunTests
+         (ya está creado en scripts-configs/RunTests.java)
+─────────────────────────────────────────────────────────
+
+    mkdir -p target/runner
+
+    javac -cp "$(cat cp.txt)" \
+          -d target/runner \
+          scripts-configs/RunTests.java
+
+Si no hay errores, el archivo target/runner/RunTests.class quedó creado.
+
+─────────────────────────────────────────────────────────
+PASO 4 — Correr Chicory sobre BoardTest y CellTest
+─────────────────────────────────────────────────────────
+
+NOTA sobre el patrón:
+El enunciado usa "--ppt-select-pattern=ar.edu.unrc.game2048.Board|ar.edu.unrc.game2048.Cell"
+pero ese regex también captura BoardTest y CellTest (coincidencia parcial).
+Usamos un patrón más estricto que exige que después de Board o Cell
+venga un carácter que no sea letra, número ni guión bajo.
+
+    java -cp "lib/daikon.jar:target/classes:target/test-classes:target/runner:$(cat cp.txt)" \
+         daikon.Chicory \
+         '--ppt-select-pattern=ar\.edu\.unrc\.game2048\.(Board|Cell)([^A-Za-z0-9_]|$)' \
+         --output-dir=daikon-traces \
+         RunTests \
+         ar.edu.unrc.game2048.BoardTest \
+         ar.edu.unrc.game2048.CellTest
+
+Resultado esperado:
+- Se imprimen los resultados de los tests (69 tests, todos OK).
+- En daikon-traces/ aparece el archivo RunTests.dtrace.gz.
+- El archivo debe pesar varios cientos de KB. Si pesa ~10 bytes está vacío
+  (algo falló con Chicory). En ese caso revisar el mensaje de error.
+
+─────────────────────────────────────────────────────────
+PASO 5 — Inferir invariantes con Daikon y guardar output
+─────────────────────────────────────────────────────────
+
+    java -cp lib/daikon.jar daikon.Daikon \
+         -o daikon-traces/output.inv.gz \
+         daikon-traces/*.dtrace.gz \
+         > daikon-output.txt 2>&1
+
+NOTA: el enunciado dice "--save_inv_to" pero en Daikon 5.9.0 esa opción
+no existe. La opción correcta es "-o".
+
+Verificá que daikon-output.txt tiene contenido real:
+
+    grep ':::OBJECT' daikon-output.txt
+
+Deberías ver sólo líneas de Board, Board$Position y Cell
+(más las cuatro *MoveStrategy porque Board las usa internamente):
+
+    ar.edu.unrc.game2048.Board:::OBJECT
+    ar.edu.unrc.game2048.Board$Position:::OBJECT
+    ar.edu.unrc.game2048.Cell:::OBJECT
+    ar.edu.unrc.game2048.strategy.*MoveStrategy:::OBJECT  ← esperado, viene de Board
+
+─────────────────────────────────────────────────────────
+PASO 6 (OPCIONAL) — Ver el reporte de invariantes
+         sin tener que volver a correr la inferencia
+─────────────────────────────────────────────────────────
+
+    java -cp lib/daikon.jar daikon.PrintInvariants daikon-traces/output.inv.gz
+
+─────────────────────────────────────────────────────────
+PASO 7 (OPCIONAL) — Traza extra con el fuzzer
+─────────────────────────────────────────────────────────
+
+    python3 scripts-configs/fuzzer.py | \
+    java -cp "lib/daikon.jar:target/classes:$(cat cp.txt)" \
+         daikon.Chicory \
+         '--ppt-select-pattern=ar\.edu\.unrc\.game2048\.(Board|Cell)([^A-Za-z0-9_]|$)' \
+         --output-dir=daikon-traces \
+         --dtrace-file=MainCLI.dtrace.gz \
+         ar.edu.unrc.game2048.MainCLI
+
+Después volvé a correr el Paso 5 para que Daikon procese también esta traza.
+
+─────────────────────────────────────────────────────────
+NOTAS IMPORTANTES
+─────────────────────────────────────────────────────────
+
+1. Si en daikon-traces/ quedan archivos viejos de corridas fallidas
+   (por ejemplo JUnitCore.dtrace.gz de ~10 bytes), borrarlos ANTES
+   de correr el Paso 5, porque el glob *.dtrace.gz los levanta todos
+   y Daikon explota con "Unexpected end of ZLIB input stream":
+
+       rm -f daikon-traces/JUnitCore.dtrace.gz
+
+2. El filtro --ppt-select-pattern va en CHICORY (Paso 4), no en Daikon.
+   Si se lo pasás a Daikon, este procesa todo lo que haya en el .dtrace
+   de todas formas.
+
+3. Daikon agrega invariantes del tipo "$assertionsDisabled == false"
+   en casi todos los métodos. Se puede ignorar al analizar, es ruido
+   interno de Java.
+
+4. Las cuatro *MoveStrategy:::OBJECT en la salida son esperadas.
+   Si no las querés, agregá esta opción en el Paso 4:
+
+       --ppt-omit-pattern='strategy'
+
+=========================================================
