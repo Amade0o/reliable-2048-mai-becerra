@@ -146,7 +146,8 @@ class GrammarFuzzer(Fuzzer):
         cell  ::= "0" | "2" | "4" | ... | "2048"
     """
 
-    CELLS = ['0', '2', '4', '8', '16', '32', '64', '128', '256', '512', '1024', '2048']
+    # "0" (vacía) y las potencias de 2 desde 2 hasta 2048 (máximo permitido)
+    CELLS = ['0', '2', '4', '8', '16', '32', '64', '128', '256', '512', '1024']
 
     def __init__(self, size: int = 4):
         self.size = size
@@ -163,11 +164,8 @@ class GrammarFuzzer(Fuzzer):
 
 class BoardRunner(CLIRunner):
     """
-    Ejecuta MainCLI con un tablero inicial.
-
-    SUPUESTO: MainCLI recibe "<size> <setup>" como argumentos de línea de
-    comandos, y los movimientos siguen entrando por stdin.
-    Si tu compañero elige otra interfaz, solo hay que tocar run().
+    Ejecuta MainCLI eligiendo "tablero manual" (Y) y le pasa por stdin:
+        Y / <size> / <tablero> / <movimientos...> / q
     """
 
     def __init__(self, size: int = 4):
@@ -175,8 +173,94 @@ class BoardRunner(CLIRunner):
         self.moves = RandomFuzzer()
 
     def run(self, board: str):
-        self.COMMAND = CLIRunner.COMMAND + [str(self.size), board]
-        return super().run(self.moves.fuzz())
+        inp = "Y\n" + str(self.size) + "\n" + board + "\n" + self.moves.fuzz()
+        return super().run(inp)
+
+
+# ---------------------------------------------------------------------------
+# Mutator: rompe un tablero válido para obtener tableros (probablemente) inválidos
+# ---------------------------------------------------------------------------
+
+class Mutator:
+    """Con 20% de probabilidad aplica UNA mutación de un caracter (insertar, borrar o reemplazar)."""
+
+    PROBABILITY = 0.2
+
+    ALPHABET = '0123456789,;- +x'   # sin salto de línea: rompería el stdin
+
+    def insert(self, s: str) -> str:
+        pos = random.randint(0, len(s))
+        return s[:pos] + random.choice(self.ALPHABET) + s[pos:]
+
+    def delete(self, s: str) -> str:
+        if not s:
+            return s
+        pos = random.randrange(len(s))
+        return s[:pos] + s[pos + 1:]
+
+    def replace(self, s: str) -> str:
+        if not s:
+            return s
+        pos = random.randrange(len(s))
+        return s[:pos] + random.choice(self.ALPHABET) + s[pos + 1:]
+
+    def mutate(self, s: str) -> str:
+        if random.random() < self.PROBABILITY:
+            s = random.choice([self.insert, self.delete, self.replace])(s)
+        return s
+
+
+def is_valid_board(board: str, size: int) -> bool:
+    """Oráculo: dice si `board` cumple la gramática (size filas, size celdas, 0 o potencia de 2)."""
+    rows = board.split(';')
+    if len(rows) != size:
+        return False
+    for row in rows:
+        cells = row.split(',')
+        if len(cells) != size:
+            return False
+        for cell in cells:
+            if not cell.isdigit():
+                return False
+            value = int(cell)
+            if value != 0 and value & (value - 1) != 0:
+                return False
+    return True
+
+
+# ---------------------------------------------------------------------------
+# Arnés de mutación: ¿el programa rechaza lo inválido y acepta lo válido, sin crashear?
+# ---------------------------------------------------------------------------
+
+REJECT_MESSAGE = "Invalid board"   # lo que MainCLI imprime al rechazar un tablero
+
+
+def mutation_main(trials: int = 100, size: int = 4):
+    grammar = GrammarFuzzer(size)
+    mutator = Mutator()
+    runner = CLIRunner()
+    problems = 0
+
+    for i in range(trials):
+        board = mutator.mutate(grammar.fuzz())
+        result, outcome = runner.run("Y\n" + str(size) + "\n" + board + "\nq\n")
+
+        if outcome != PASS:
+            problem = f"{outcome} (crash o timeout): {result.stderr.strip()[:150] if result else ''}"
+        else:
+            rejected = REJECT_MESSAGE in result.stdout
+            valid = is_valid_board(board, size)
+            if rejected and valid:
+                problem = "rechazó un tablero válido"
+            elif not rejected and not valid:
+                problem = "aceptó un tablero inválido"
+            else:
+                continue
+
+        problems += 1
+        print(f"[{i + 1}] {problem}\n    tablero: {board!r}")
+
+    print(f"\n{problems} problemas en {trials} pruebas")
 
 
 # ---------------------------------------------------------------------------
@@ -218,4 +302,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "mutate":
+        mutation_main()
+    else:
+        main()

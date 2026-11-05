@@ -113,10 +113,10 @@ public class Board {
         if (setup == null || setup.isEmpty()) {
             throw new IllegalArgumentException("Setup string must not be null or empty");
         }
-        if (setup.split(";").length != size) {
+        if (setup.split(";", -1).length != size) {
             throw new IllegalArgumentException("Setup string must have " + size + " rows");
         }
-        if (Arrays.stream(setup.split(";")).anyMatch(row -> row.split(",").length != size)) {
+        if (Arrays.stream(setup.split(";", -1)).anyMatch(row -> row.split(",", -1).length != size)) {
             throw new IllegalArgumentException("Each row in setup string must have " + size + " columns");
         }
         this.size = size;
@@ -124,10 +124,13 @@ public class Board {
         this.randomGeneration = new MathRandom();
         this.score = 0;
         initializeEmpty();
-        String[] rows = setup.split(";");
+        String[] rows = setup.split(";", -1);
         for (int r = 0; r < size; r++) {
-            String[] values = rows[r].split(",");
+            String[] values = rows[r].split(",", -1);
             for (int c = 0; c < size; c++) {
+                if (!values[c].matches("[0-9]+")) {
+                    throw new IllegalArgumentException("Invalid cell value: '" + values[c] + "'");
+                }
                 int value = Integer.parseInt(values[c]);
                 grid[r][c] = value == 0 ? Cell.EMPTY : new Cell(value);
             }

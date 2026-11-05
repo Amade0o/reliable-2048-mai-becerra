@@ -36,13 +36,18 @@ public class MainCLI {
 
             if(input.equals("Y")){
                 System.out.print("Ingrese el tamaño deseado del tablero: ");
-                int tamañoDeseado = Integer.parseInt(scanner.nextLine().trim());
+                String tamañoString = scanner.nextLine().trim();
                 System.out.println();
 
                 System.out.print("Ingrese el tablero: (caracteres separados por ',' y filas separadas por ';': ");
                 String tableroString = scanner.nextLine();
 
-                this.board = new Board(tamañoDeseado,tableroString);
+                try {
+                    this.board = new Board(Integer.parseInt(tamañoString), tableroString);
+                } catch (IllegalArgumentException e) { // incluye NumberFormatException
+                    System.out.println("Invalid board: " + e.getMessage());
+                    return;
+                }
 
                 System.out.println();
 
