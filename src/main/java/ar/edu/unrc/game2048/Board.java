@@ -110,6 +110,15 @@ public class Board {
         if (size <= 0) {
             throw new IllegalArgumentException("Board size must be positive: " + size);
         }
+        if (setup == null || setup.isEmpty()) {
+            throw new IllegalArgumentException("Setup string must not be null or empty");
+        }
+        if (setup.split(";").length != size) {
+            throw new IllegalArgumentException("Setup string must have " + size + " rows");
+        }
+        if (Arrays.stream(setup.split(";")).anyMatch(row -> row.split(",").length != size)) {
+            throw new IllegalArgumentException("Each row in setup string must have " + size + " columns");
+        }
         this.size = size;
         this.grid = new Cell[size][size];
         this.randomGeneration = new MathRandom();

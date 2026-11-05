@@ -134,12 +134,59 @@ class RandomFuzzer(Fuzzer):
         return '\n'.join(moves) + '\n'
 
 # ---------------------------------------------------------------------------
+# GrammarFuzzer: genera el String para el constructor Board(int, String)
+# ---------------------------------------------------------------------------
+
+class GrammarFuzzer(Fuzzer):
+    """
+    Genera tableros válidos según esta gramática (n = size):
+
+        board ::= row (";" row){n-1}
+        row   ::= cell ("," cell){n-1}
+        cell  ::= "0" | "2" | "4" | ... | "2048"
+    """
+
+    CELLS = ['0', '2', '4', '8', '16', '32', '64', '128', '256', '512', '1024', '2048']
+
+    def __init__(self, size: int = 4):
+        self.size = size
+
+    def cell(self) -> str:
+        return random.choice(self.CELLS)
+
+    def row(self) -> str:
+        return ','.join(self.cell() for _ in range(self.size))
+
+    def fuzz(self) -> str:
+        return ';'.join(self.row() for _ in range(self.size))
+
+
+class BoardRunner(CLIRunner):
+    """
+    Ejecuta MainCLI con un tablero inicial.
+
+    SUPUESTO: MainCLI recibe "<size> <setup>" como argumentos de línea de
+    comandos, y los movimientos siguen entrando por stdin.
+    Si tu compañero elige otra interfaz, solo hay que tocar run().
+    """
+
+    def __init__(self, size: int = 4):
+        self.size = size
+        self.moves = RandomFuzzer()
+
+    def run(self, board: str):
+        self.COMMAND = CLIRunner.COMMAND + [str(self.size), board]
+        return super().run(self.moves.fuzz())
+
+
+# ---------------------------------------------------------------------------
 # Main: run the fuzzer and report results
 # ---------------------------------------------------------------------------
 
 def main():
-    runner = CLIRunner()
-    fuzzer = RandomFuzzer()
+    size = 4
+    runner = BoardRunner(size)
+    fuzzer = GrammarFuzzer(size)
 
     trials = 20
     outcomes = {PASS: 0, FAIL: 0, UNRESOLVED: 0}
